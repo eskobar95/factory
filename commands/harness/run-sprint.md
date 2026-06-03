@@ -36,7 +36,7 @@ Execute all tasks for a sprint using the **harness** skill and parallel subagent
 5. **Execute by parallel group**
    - For each group in order (A → B → C …):
      - Launch **Build in Parallel** — one subagent per task in group
-     - Each subagent runs: implement → verify → review → close (max 2 revision cycles)
+     - Each subagent runs: implement → verify → review (task fit + thermo-nuclear) → close (max 2 revision cycles)
    - Wait for group completion before starting next group
 
 6. **Update tasks.md** continuously as harness specifies

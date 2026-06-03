@@ -25,6 +25,8 @@ Inspired by [Matt Pocock's skills](https://www.aihero.dev/skills.md): `grill-wit
 | Command | Skill | Output |
 |---------|-------|--------|
 | `/run-sprint S001` | `harness/harness` + implement/verify/review/close | PRs to `dev` |
+
+Review runs **two phases**: task fit (acceptance, security, scope) + **thermo-nuclear** maintainability audit on the diff.
 | `/milestone-review M001` | `harness/milestone-ci` | `dev → staging` PR |
 
 Tasks use **vertical slices**, **parallel groups** (A, B, C…), and **Mode: AFK | HITL**.

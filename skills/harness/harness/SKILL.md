@@ -49,7 +49,7 @@ For each runnable task, run this pipeline (use subagents / Build in Parallel wit
 |------|-------|---------|
 | 1 | `implement` | Retry implement once with failure context |
 | 2 | `verify` | Back to implement (revision cycle 1) |
-| 3 | `review` | Back to implement (revision cycle 1) |
+| 3 | `review` (Phase 1 task fit + Phase 2 thermo-nuclear) | Back to implement (revision cycle 1) |
 | 4 | `close` | If PR fails, report blocked |
 
 **Revision loop:** max **2** full cycles (implement → verify → review). After 2 failures, set task **Status** to `blocked`, note reason in task block, continue other tasks if any.
@@ -67,7 +67,7 @@ Execute Factory task [Txxx] for sprint [Sxxx].
 Read task spec in .ai/planning/tasks.md (section ## Txxx).
 Follow .ai/context/TECHSPEC.md and .cursor/rules.
 Branch: [branch from task].
-Run skills in order: implement, verify, review, close.
+Run skills in order: implement, verify, review (includes thermo-nuclear maintainability), close.
 Return: status (done|blocked), PR URL if any, summary.
 ```
 
@@ -111,6 +111,6 @@ When all sprint tasks are `done` or only `blocked` remain with no runnable work:
 
 - `skills/harness/implement/SKILL.md`
 - `skills/harness/verify/SKILL.md`
-- `skills/harness/review/SKILL.md`
+- `skills/harness/review/SKILL.md` (Phase 2: `skills/harness/thermo-nuclear-code-quality-review/SKILL.md`)
 - `skills/harness/close/SKILL.md`
 - `skills/harness/retro/SKILL.md` (end of sprint)

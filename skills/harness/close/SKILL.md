@@ -40,6 +40,7 @@ Finalize **one** task: self-review, PR to `dev`, update planning files.
 
 ### Self-review
 - [What you checked in the diff]
+- [Thermo-nuclear: PASS or summary of structural findings addressed]
 - [Any risks or limitations]
 
 ### Tech debt / follow-ups

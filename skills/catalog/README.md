@@ -7,6 +7,7 @@ Factory ships **three skill tracks**. Additional skills install here or via `npx
 | Track | Path | Purpose |
 |-------|------|---------|
 | **Harness** | `skills/harness/` | Execute tasks: implement → verify → review → close |
+| **Thermo-nuclear** | `skills/harness/thermo-nuclear-code-quality-review/` | Strict maintainability audit (built into review Phase 2) |
 | **Planning** | `skills/planning/` | Align → PRD → backlog before sprint |
 | **Productivity** | `skills/productivity/` | Session tools (handoff, etc.) |
 

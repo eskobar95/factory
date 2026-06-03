@@ -1,30 +1,32 @@
 ---
 name: review
-description: Review implementation against acceptance criteria, edge cases, security, definition of done
+description: Two-phase task review — acceptance criteria and security, then thermo-nuclear maintainability audit on the diff
 ---
 
 # Review skill
 
-Code review for **one task**. Assume verify already passed unless noted otherwise.
+Code review for **one task** after verify passes. Two phases; **both** must pass for harness to proceed to close.
 
 ## Inputs
 
 - Task section in `.ai/planning/tasks.md`
 - Git diff: `git diff dev...HEAD` (or merge-base with `dev`)
-- Changed files list
+- Changed files list + line counts for touched files (check 1k boundary)
 
-## Review checklist
+## Phase 1 — Task fit (Factory)
+
+Confirm the change matches the task contract.
 
 ### 1. Acceptance criteria
 
 For each checkbox in **Acceptance criteria**:
 
-- [ ] Met — cite file/line or test
-- [ ] Not met — explain gap
+- Met — cite file/line or test
+- Not met — explain gap
 
 ### 2. Slice objective
 
-Does the change deliver what **Slice objective** promises to the user?
+Does the change deliver what **Slice objective** promises?
 
 ### 3. Scope
 
@@ -33,61 +35,118 @@ Does the change deliver what **Slice objective** promises to the user?
 
 ### 4. Edge cases
 
-- Error paths handled (network, validation, empty state)?
-- Loading/disabled states for UI tasks?
+- Error paths, validation, empty/loading states (UI tasks)
 
-### 5. Security (from TECHSPEC + base rules)
+### 5. Security (TECHSPEC + base rules)
 
 - No secrets, tokens, or PII in logs
-- Authz on sensitive mutations if applicable
+- Authz on sensitive mutations
 - Input validation at API boundaries
 - No unsafe `dangerouslySetInnerHTML` without sanitization
 
 ### 6. Definition of done
 
-Confirm each DoD checkbox in task:
+- typecheck / lint / tests (verify)
+- No debug artifacts
+- PR description ready for close
 
-- typecheck / lint / tests (verify skill)
-- no debug artifacts
-- PR description will be needed at close
+**Phase 1 FAIL** if any acceptance criterion unmet, scope drift, or red security issue.
 
-## Verdict
+---
 
-- **PASS** — all acceptance criteria met, no red security issues, scope respected
-- **FAIL** — list concrete findings with severity
+## Phase 2 — Thermo-nuclear maintainability
+
+Apply **`skills/harness/thermo-nuclear-code-quality-review/SKILL.md`** to the same diff.
+
+Read that skill fully. Run the core prompt and non-negotiable standards against **only what this task changed**.
+
+Focus:
+
+- Code-judo / structural simplification opportunities missed
+- File size (especially crossing **1000 lines**)
+- Spaghetti branching and special-case growth
+- Wrong layer, duplicate helpers, weak abstractions
+- Type/boundary noise (`any`, unnecessary optionality)
+
+Use thermo-nuclear **Review Tone** — direct, high-conviction, not cosmetic nits.
+
+**Phase 2 FAIL** if thermo-nuclear approval bar is not met (presumptive blockers in that skill).
+
+### Scope note for harness tasks
+
+- Require **meaningful** maintainability within task scope.
+- Do **not** FAIL for pre-existing debt in untouched files unless this diff makes it worse.
+- Large structural refactors beyond task scope → note as follow-up in close PR, not necessarily FAIL, unless the diff itself introduced the regression.
+
+---
+
+## Combined verdict
+
+| Phase 1 | Phase 2 | Result |
+|---------|---------|--------|
+| pass | pass | **PASS** |
+| fail | * | **FAIL** |
+| pass | fail | **FAIL** |
 
 ```markdown
 ## Review — T[id]
 
 **Result:** PASS | FAIL
 
-### Acceptance criteria
+### Phase 1 — Task fit
+**Result:** pass | fail
+
+#### Acceptance criteria
 | # | Criterion | Status | Notes |
 |---|-----------|--------|-------|
-| 1 | ... | pass/fail | |
+| 1 | … | pass/fail | … |
 
-### Findings
-| Severity | Finding | Suggested fix |
-|----------|---------|---------------|
-| high | ... | ... |
-| medium | ... | ... |
-| low | ... | ... |
-
-### Security
+#### Security
 [pass / issues]
 
-### Scope
+#### Scope
 [pass / drift noted]
+
+### Phase 2 — Thermo-nuclear
+**Result:** pass | fail
+
+| Priority | Finding | Remedy |
+|----------|---------|--------|
+| structural | … | … |
+
+**Presumptive blockers:** [list or none]
+
+### Findings (consolidated)
+| Severity | Phase | Finding | Suggested fix |
+|----------|-------|---------|---------------|
+| high | 1 or 2 | … | … |
 
 ### Recommended action
 [Proceed to close | Return to implement with numbered fixes]
 ```
 
+Severity guide:
+
+- **high** — Phase 1 unmet criteria, security, or Phase 2 presumptive blocker
+- **medium** — Should fix in this task revision (maintainability)
+- **low** — Follow-up tech debt (document in close PR only if not blocking)
+
 ## Revision guidance
 
-On FAIL, findings must be **actionable** for implement agent (file + change). Max 2 revision cycles enforced by harness.
+On FAIL, findings must be **actionable** (file + change). Harness allows max **2** revision cycles.
+
+Prioritize fixes: Phase 1 blockers first, then Phase 2 structural issues.
+
+## Optional: subagent
+
+For large diffs (>15 files or >800 lines changed), parent harness may spawn a **thermo-nuclear-code-quality-review** subagent with the diff summary, then merge into Phase 2. Single-agent review is fine for small tasks.
 
 ## Do not
 
-- Merge PR
-- Approve scope creep as "nice to have" without new task
+- Merge PR or mark task done
+- PASS Phase 2 because "tests pass" or Phase 1 alone passed
+- Approve scope creep as "nice to have"
+
+## Skills referenced
+
+- `skills/harness/thermo-nuclear-code-quality-review/SKILL.md`
