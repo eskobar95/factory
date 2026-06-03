@@ -14,7 +14,13 @@ Run at **end of sprint** (after harness or `/run-sprint` completes).
 - `.ai/planning/sprints.md`
 - Memory of revision loops, blocked tasks, verify/review failures
 
-## Diary entry
+## Per-task diary (already written)
+
+During the sprint, lead harness appended one entry per task via `skills/harness/log-task/SKILL.md` (`## Task Txxx — …`).
+
+Retro **summarizes** those entries — do not re-paste full task logs.
+
+## Diary entry (sprint retro)
 
 Append to `.ai/logs/diary.md` (never overwrite prior entries):
 
@@ -33,10 +39,15 @@ Append to `.ai/logs/diary.md` (never overwrite prior entries):
 ### What failed or slowed down
 - [Bullet — e.g. T003 verify failed twice on lint]
 
-### Revision loops
+### Task log index
+| Task | Final status | See diary section |
+|------|--------------|-------------------|
+| T00x | done/blocked | Task T00x — [date] |
+
+### Revision loops (aggregate)
 | Task | Cycles | Resolved by |
 |------|--------|-------------|
-| T00x | 2 | [fix summary] or — |
+| T00x | 2 | [from per-task diary] or — |
 
 ### Harness notes
 - Parallel groups used: A, B, …

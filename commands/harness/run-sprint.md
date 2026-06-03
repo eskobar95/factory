@@ -1,6 +1,6 @@
 # /run-sprint [sprint-id]
 
-Execute all tasks for a sprint using the **harness** skill and parallel subagents.
+Execute sprint tasks via **lead harness** + **parallel Task subagents**. Updates `tasks.md` and **per-task** `diary.md` entries.
 
 ## Usage
 
@@ -10,41 +10,36 @@ Execute all tasks for a sprint using the **harness** skill and parallel subagent
 
 ## Prerequisites
 
-- `.ai/planning/tasks.md` populated with tasks for the sprint
-- Git branch `dev` exists on remote (or create locally per project policy)
-- Factory harness skills at `.cursor/skills/factory/harness/`
-- HITL tasks require human checkpoint before implementation
-- Cursor 3.3+ with subagents / Build in Parallel
+- `.ai/planning/tasks.md` with sprint tasks and **Parallel group** / **Mode**
+- Branch `dev` exists
+- Factory harness at `.cursor/skills/factory/harness/`
+- Cursor 3.3+ with **Task** tool (subagents)
+
+## Lead agent obligations
+
+The session running this command is the **lead**. It MUST:
+
+1. Run harness **preflight** checklist
+2. Dispatch each parallel group with **multiple Task calls in one turn** (`run_in_background: true`)
+3. **Not** implement AFK tasks inline in the lead session
+4. After each subagent: update `tasks.md` + run **log-task** → append `.ai/logs/diary.md`
+5. After all groups: run **retro** (sprint summary in diary)
 
 ## Procedure
 
-1. **Validate sprint ID**
-   - Read `.ai/planning/sprints.md` — confirm sprint exists
-   - If sprint status is `done`, report and exit unless user forces rerun
+1. Load `skills/harness/harness/SKILL.md` — follow exactly
+2. Preflight → print runnable / HITL / blocked
+3. For each group A, B, C…: parallel Task dispatch → wait → process results → log-task each
+4. Retro + composer summary
 
-2. **Load harness playbook**
-   - Apply `skills/harness/harness/SKILL.md` as lead agent behavior for this session
+## Logs updated
 
-3. **Collect tasks**
-   - Parse `.ai/planning/tasks.md` for all tasks where `**Sprint:**` matches `[sprint-id]`
-   - Build parallel groups A, B, C… per harness rules
-   - List runnable tasks (status `todo`, blockers satisfied)
-
-4. **Update sprint status**
-   - Set sprint to `active` in `.ai/planning/sprints.md` when starting
-
-5. **Execute by parallel group**
-   - For each group in order (A → B → C …):
-     - Launch **Build in Parallel** — one subagent per task in group
-     - Each subagent runs: implement → verify → review (task fit + thermo-nuclear) → close (max 2 revision cycles)
-   - Wait for group completion before starting next group
-
-6. **Update tasks.md** continuously as harness specifies
-
-7. **Sprint end**
-   - Run `skills/harness/retro/SKILL.md` for the sprint
-   - Set sprint status `done` or `blocked` in `sprints.md`
-   - Print harness summary table (tasks, PRs, blockers)
+| File | When |
+|------|------|
+| `tasks.md` | Each task state change |
+| `sprints.md` | active → done/blocked |
+| `diary.md` | Each task done/blocked/skipped (+ optional started) |
+| `diary.md` | Sprint retro at end |
 
 ## Composer summary (required)
 
@@ -55,19 +50,19 @@ Execute all tasks for a sprint using the **harness** skill and parallel subagent
 |--------|-------|
 | Tasks done | n |
 | Tasks blocked | n |
-| PRs opened | n |
+| Diary entries | n task + 1 retro |
 
 **PRs:** [links]
-**Blocked:** [Txxx — reason] or none
+**Diary:** .ai/logs/diary.md
 **Next:** /run-sprint S00y | /milestone-review M00x
 ```
 
 ## Failure handling
 
-- Single task blocked after 2 cycles: continue other parallel tasks in same group if independent
-- If all tasks in a group fail, stop and report; do not advance to next group without user ack
+- One task blocked: continue independent tasks in same group
+- All tasks in group blocked: stop; ask user before next group
 
 ## Do not
 
-- Merge to `staging` or `main`
-- Run milestone CI (use `/milestone-review`)
+- Merge to staging/main
+- Skip log-task on terminal states

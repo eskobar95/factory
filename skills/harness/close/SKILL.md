@@ -67,6 +67,8 @@ In `.ai/planning/tasks.md` for this task:
 
 ## Output
 
+Return YAML for **lead harness** (see `skills/harness/harness/SKILL.md`). Lead runs `log-task`; subagent does not append diary.
+
 ```markdown
 ## Close — T[id]
 
@@ -75,8 +77,11 @@ In `.ai/planning/tasks.md` for this task:
 **Unblocked tasks:** T00y, T00z | none
 ```
 
+Include in harness YAML: `pr_url`, `unblocked_tasks`, `review_phase1`, `review_phase2_thermo`.
+
 ## Do not
 
 - Merge the PR (human or CI policy may auto-merge to dev per project setup)
 - Merge to `staging` or `main`
 - Delete branch until after merge (project git rules)
+- Append `.ai/logs/diary.md` (lead `log-task` skill does this)

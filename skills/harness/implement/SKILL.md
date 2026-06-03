@@ -57,6 +57,10 @@ Use exact **Branch** from task metadata.
 **Blockers:** [if any — else none]
 ```
 
+## Subagent mode
+
+When dispatched by harness Task tool, you are part of a longer pipeline — do not open PR or write diary. Return control to implement → verify → review → close chain; harness collects final YAML.
+
 ## Do not
 
 - Open PR (close skill does that)
