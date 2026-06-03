@@ -1,0 +1,38 @@
+---
+description: Base coding standards for all Factory-enabled projects
+alwaysApply: true
+---
+
+# Base rules
+
+## TypeScript
+
+- Use **strict mode** in `tsconfig.json` (`strict: true`).
+- Do **not** use `any` without an explicit comment explaining why (e.g. `// any: third-party SDK has no types`).
+
+## Secrets and artifacts
+
+- Never commit secrets, tokens, API keys, or connection strings.
+- Remove `console.log` debug noise, `debugger`, and temporary `TODO(FIXME)` before PR unless tracked in task scope.
+
+## Commits
+
+- Follow **Conventional Commits**: `feat:`, `fix:`, `chore:`, `docs:`, `refactor:`, `test:`.
+- Scope optional: `feat(auth): add session cookie`.
+
+## Branches
+
+- Task branches: `feature/[sprint]/[task-id]-[slug]` (e.g. `feature/S001/T003-add-login-form`).
+- Never commit directly to `dev`, `staging`, or `main`.
+
+## Scope discipline
+
+- Implement only what the active task defines; no drive-by refactors.
+- Read `.ai/context/TECHSPEC.md` and task acceptance criteria before coding.
+
+## Quality gates (per task)
+
+- `pnpm typecheck` must pass.
+- `pnpm lint` must pass.
+- Tests for new logic must pass.
+- PR description must be complete before marking task done.

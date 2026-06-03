@@ -1,0 +1,38 @@
+---
+description: Next.js 15 App Router conventions
+globs: "**/*.{ts,tsx}"
+alwaysApply: false
+---
+
+# Next.js App Router rules
+
+## Server vs client
+
+- **Server Components** are the default — no `"use client"` unless required.
+- Add `"use client"` only for: hooks, browser APIs, event handlers, client-only libraries.
+- Never import server-only modules (DB, secrets) into Client Components.
+
+## Data fetching
+
+- Fetch data in Server Components, Route Handlers, or Server Actions — not in `page.tsx` via client-side fetch for initial render unless justified.
+- **Do not** call the database directly from `page.tsx` / `layout.tsx` — use a server module or data layer function.
+
+## Routes and API
+
+- Use Route Handlers in `app/api/` for HTTP endpoints.
+- Validate request body/query at the boundary (zod or equivalent).
+- Return appropriate status codes; do not leak stack traces in production responses.
+
+## Caching and revalidation
+
+- Prefer explicit `revalidate` / `cache` options over accidental static caching of dynamic data.
+- Document when a route must be dynamic (`export const dynamic = 'force-dynamic'`).
+
+## Assets and metadata
+
+- Use `next/image` for images; use `metadata` export or `generateMetadata` for SEO.
+
+## Security
+
+- Environment variables with secrets: no `NEXT_PUBLIC_` prefix.
+- Mutations via Server Actions should validate input and enforce auth when added.

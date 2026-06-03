@@ -1,0 +1,34 @@
+---
+description: Drizzle ORM and migration conventions
+globs: "**/db/**/*.{ts,sql},**/drizzle/**/*,**/schema*.ts"
+alwaysApply: false
+---
+
+# Drizzle rules
+
+## Transactions
+
+- Use **transactions** for any multi-step write that must succeed or fail together.
+- Do not leave partial updates across tables without a transaction boundary.
+
+## Migrations
+
+- Name migrations: `[timestamp]-[description]` (e.g. `20260603120000-add-users-table`).
+- One logical change per migration when possible.
+- Migrations must be reversible or documented in `.ai/logs/decisions.md` if not.
+
+## Queries
+
+- Prefer Drizzle query builder over raw SQL.
+- **Raw SQL** only with a comment explaining why (performance, unsupported operator, etc.).
+- Always use parameterized queries — never concatenate user input into SQL strings.
+
+## Schema
+
+- Keep schema definitions in dedicated modules; export types inferred from schema.
+- Foreign keys and indexes defined explicitly for production tables.
+
+## Seeds and dev data
+
+- No production secrets or real PII in seed scripts.
+- Seed scripts idempotent where possible.

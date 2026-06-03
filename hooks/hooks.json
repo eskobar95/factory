@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "hooks": {
+    "afterFileEdit": [
+      {
+        "command": ".cursor/hooks/run-typecheck.sh",
+        "failClosed": true,
+        "timeout": 120
+      },
+      {
+        "command": ".cursor/hooks/run-security-audit.sh",
+        "failClosed": false,
+        "timeout": 180
+      }
+    ]
+  }
+}

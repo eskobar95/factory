@@ -1,0 +1,9 @@
+{
+  "description": "Run pnpm typecheck after agent edits TypeScript files. Blocks next step on failure (exit 2).",
+  "hook": "afterFileEdit",
+  "entry": {
+    "command": ".cursor/hooks/run-typecheck.sh",
+    "failClosed": true,
+    "timeout": 120
+  }
+}

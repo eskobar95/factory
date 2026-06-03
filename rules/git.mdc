@@ -1,0 +1,46 @@
+---
+description: Git and PR workflow for Factory branch model
+alwaysApply: true
+---
+
+# Git workflow rules
+
+## Protected branches
+
+- **Never** commit or push directly to `dev`, `staging`, or `main`.
+- All work lands via PR from task branches.
+
+## Branch naming
+
+- Tasks: `feature/[sprint]/[task-id]-[slug]`
+- Example: `feature/S001/T004-add-checkout-step`
+
+## Pull requests
+
+- **PR description is mandatory** — use the template from `skills/close/SKILL.md`.
+- Task PRs target **`dev`** only.
+- Milestone PRs target **`staging`** from `dev` (human merges).
+
+## After merge
+
+- Delete the feature branch locally and on remote after merge.
+- Keep `dev` updated before starting a new task branch.
+
+## Factory system branches
+
+```
+main          ← you merge staging → main manually
+staging       ← milestone PRs (you approve)
+dev           ← task PRs (agents)
+feature/...   ← one branch per task
+```
+
+## Commits on feature branches
+
+- Conventional Commits; small logical commits allowed.
+- No merge commits from protected branches into feature branches without reason.
+
+## Do not
+
+- Force-push `dev`, `staging`, or `main` without explicit user request
+- Squash history on shared branches without project policy

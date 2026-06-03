@@ -1,0 +1,81 @@
+---
+name: close
+description: Self-review diff, open PR to dev, update tasks.md, unblock parallel groups
+---
+
+# Close skill
+
+Finalize **one** task: self-review, PR to `dev`, update planning files.
+
+## Prerequisites
+
+- Implement, verify, and review returned PASS for this task
+- Branch pushed to origin (push if not)
+
+## Self-review (pre-PR)
+
+1. `git diff dev...HEAD` — read full diff
+2. Confirm no secrets, debug logs, or unrelated files
+3. Note any **tech debt** intentionally left (must be in Out of scope or documented)
+
+## Pull request
+
+- **Base:** `dev`
+- **Head:** task branch `feature/[sprint]/[task-id]-[slug]`
+- **Title:** `feat([scope]): [task title]` or conventional type matching change
+
+### PR description template
+
+```markdown
+## Task T[id] — [title]
+
+**Sprint:** S[id] | **Milestone:** M[id]
+
+### What was built
+[Bullet list tied to slice objective]
+
+### Acceptance criteria
+- [x] [criterion 1]
+- [x] [criterion 2]
+
+### Self-review
+- [What you checked in the diff]
+- [Any risks or limitations]
+
+### Tech debt / follow-ups
+- [None] or [ticket-style bullets for out-of-scope discoveries]
+
+### Verify summary
+Typecheck: pass | Lint: pass | Tests: pass
+```
+
+Create PR via `gh pr create` if GitHub CLI available; otherwise instruct user with title/body.
+
+## Update tasks.md
+
+In `.ai/planning/tasks.md` for this task:
+
+- Set `**Status:** done`
+- Optional: add `**PR:** #123` under metadata
+
+## Unblock next work
+
+1. List tasks whose **Blocked by** includes this task ID
+2. If all blockers for a task are now `done`, ensure its status is `todo` (not `blocked`)
+3. Report to harness which **Parallel group** tasks are now runnable
+
+## Output
+
+```markdown
+## Close — T[id]
+
+**Status:** done
+**PR:** [URL or number]
+**Unblocked tasks:** T00y, T00z | none
+```
+
+## Do not
+
+- Merge the PR (human or CI policy may auto-merge to dev per project setup)
+- Merge to `staging` or `main`
+- Delete branch until after merge (project git rules)
