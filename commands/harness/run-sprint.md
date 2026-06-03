@@ -12,7 +12,8 @@ Execute all tasks for a sprint using the **harness** skill and parallel subagent
 
 - `.ai/planning/tasks.md` populated with tasks for the sprint
 - Git branch `dev` exists on remote (or create locally per project policy)
-- Factory skills available at `.cursor/skills/factory/`
+- Factory harness skills at `.cursor/skills/factory/harness/`
+- HITL tasks require human checkpoint before implementation
 - Cursor 3.3+ with subagents / Build in Parallel
 
 ## Procedure
@@ -22,7 +23,7 @@ Execute all tasks for a sprint using the **harness** skill and parallel subagent
    - If sprint status is `done`, report and exit unless user forces rerun
 
 2. **Load harness playbook**
-   - Apply `skills/harness/SKILL.md` as lead agent behavior for this session
+   - Apply `skills/harness/harness/SKILL.md` as lead agent behavior for this session
 
 3. **Collect tasks**
    - Parse `.ai/planning/tasks.md` for all tasks where `**Sprint:**` matches `[sprint-id]`
@@ -41,7 +42,7 @@ Execute all tasks for a sprint using the **harness** skill and parallel subagent
 6. **Update tasks.md** continuously as harness specifies
 
 7. **Sprint end**
-   - Run `skills/retro/SKILL.md` for the sprint
+   - Run `skills/harness/retro/SKILL.md` for the sprint
    - Set sprint status `done` or `blocked` in `sprints.md`
    - Print harness summary table (tasks, PRs, blockers)
 

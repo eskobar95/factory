@@ -1,58 +1,108 @@
 # Factory — Personal AI Dev OS
 
-Private GitHub repo (`eskobar/factory`) that acts as a catalog of Cursor commands, skills, rules, and hooks. Install into any project via git submodule and `install.sh`.
+Private GitHub repo (`eskobar/factory`) — Cursor commands, skills, rules, and hooks for solo multi-project development.
 
-## What it provides
+## Two tracks
 
-- **Commands** — explicit triggers (`/po-breakdown`, `/run-sprint`, `/milestone-review`)
-- **Skills** — procedural playbooks for agents (harness, implement, verify, review, close, retro, milestone-ci)
-- **Rules** — declarative, always-on code standards
-- **Hooks** — event-driven automation (typecheck on save, security on package change)
-- **Templates** — scaffolding for `.ai/` in new projects
+### Planning track (before code)
+
+Align and spec **before** the harness runs.
+
+| Command | Skill | Output |
+|---------|-------|--------|
+| `/align` | `planning/align` | `CONTEXT.md`, ADRs |
+| `/to-prd` | `planning/to-prd` | `PRD.md`, `TECHSPEC.md` |
+| `/to-backlog` | `planning/to-backlog` | milestones, sprints, `tasks.md` |
+| `/to-plan` | all three (fast path) | same as full pipeline |
+| `/handoff` | `productivity/handoff` | temp session summary |
+
+Inspired by [Matt Pocock's skills](https://www.aihero.dev/skills.md): `grill-with-docs` → `to-prd` → `to-issues`. Factory uses `.ai/` + `tasks.md` instead of GitHub issues.
+
+**Deprecated:** `/po-breakdown` → `/to-plan`
+
+### Harness track (execution)
+
+| Command | Skill | Output |
+|---------|-------|--------|
+| `/run-sprint S001` | `harness/harness` + implement/verify/review/close | PRs to `dev` |
+| `/milestone-review M001` | `harness/milestone-ci` | `dev → staging` PR |
+
+Tasks use **vertical slices**, **parallel groups** (A, B, C…), and **Mode: AFK | HITL**.
+
+## Repo layout
+
+```
+factory/
+  commands/
+    planning/       align, to-prd, to-backlog, to-plan
+    harness/        run-sprint, milestone-review
+    productivity/   handoff
+  skills/
+    harness/        implement, verify, review, close, retro, milestone-ci
+    planning/       align, to-prd, to-backlog
+    productivity/   handoff
+    catalog/        README for third-party skills
+  rules/
+  hooks/
+  templates/
+  install.sh
+```
 
 ## Install in a project
 
 ```bash
-# From your project root
-curl -sSL https://raw.githubusercontent.com/eskobar/factory/main/install.sh | bash
-# Or clone and run locally:
 git submodule add git@github.com:eskobar/factory.git .factory
 ./.factory/install.sh
 ```
 
-After install, your project has:
-
 ```
 [project]/
-  .factory/          ← submodule (this repo)
-  .ai/               ← PRD, techspec, planning, logs
-  .cursor/           ← symlinks to factory rules/skills/commands/hooks
+  .factory/
+  .ai/
+    context/     PRD, TECHSPEC, CONTEXT, ADR/
+    planning/    milestones, sprints, tasks
+    logs/
+    skills/      project-specific overrides
+  .cursor/       symlinks → .factory/*
 ```
 
-## Workflow
+## End-to-end workflow
 
-1. Give a macro idea in Composer
-2. `/po-breakdown` → PRD, techspec, milestones, atomic tasks
-3. `/run-sprint [sprint-id]` → harness runs tasks in parallel via subagents
-4. `/milestone-review [milestone-id]` → CI gates + `dev → staging` PR for your approval
+```mermaid
+flowchart LR
+  idea[Macro idea]
+  align[/align/]
+  prd[/to-prd/]
+  backlog[/to-backlog/]
+  sprint[/run-sprint/]
+  milestone[/milestone-review/]
+  idea --> align --> prd --> backlog --> sprint --> milestone
+```
 
-## Branch model (in target projects)
+Or: `idea → /to-plan → /run-sprint → /milestone-review`
+
+You only approve **`staging → main`** and milestone PRs to staging.
+
+## Additional skills
+
+- **Project:** `.ai/skills/` → `.cursor/skills/project/`
+- **Vendor:** `npx skills add mattpocock/skills` — see [skills/catalog/README.md](skills/catalog/README.md)
+
+## Branch model
 
 ```
-main
-  └── staging      ← you merge here when milestone is approved
-        └── dev    ← task PRs merge here automatically
+main ← you merge staging here
+  └── staging ← milestone PR
+        └── dev ← task PRs
               └── feature/[sprint]/[task-id]-[slug]
 ```
 
-Factory never touches `main`. You merge `staging → main` yourself.
-
 ## Requirements
 
-- Cursor 3.3+ (subagents + Build in Parallel)
-- Cursor 3.5+ for milestone Background Agents
-- pnpm-based projects (typecheck, lint, test scripts)
+- Cursor 3.3+ (subagents, Build in Parallel)
+- Cursor 3.5+ (milestone Background Agents)
+- pnpm projects (`typecheck`, `lint`, `test`)
 
 ## License
 
-Private — solo use only.
+Private — solo use.

@@ -19,7 +19,7 @@ You are the **lead agent** for a sprint. You do not implement features yourself 
 Each task block includes:
 
 - `## T[id] — [title]`
-- **Sprint**, **Milestone**, **Status**, **Parallel group**, **Blocked by**, **Branch**
+- **Sprint**, **Milestone**, **Status**, **Mode** (`AFK` | `HITL`), **Parallel group**, **Blocked by**, **Branch**
 - Slice objective, layers, acceptance criteria, out of scope, context, definition of done
 
 Status values: `todo` | `in-progress` | `blocked` | `done`
@@ -32,6 +32,7 @@ Status values: `todo` | `in-progress` | `blocked` | `done`
 4. Within a group, tasks are runnable in parallel if:
    - Status is `todo` or `blocked` only because upstream isn't done — re-evaluate after each group completes
    - **Blocked by** is `none` OR every listed task ID is `done`
+   - **Mode** is `AFK` — skip `HITL` tasks until user confirms checkpoint (mark `blocked` with reason if needed)
 5. Order groups alphabetically: run all eligible tasks in A, then B, etc.
 
 ```mermaid
@@ -108,8 +109,8 @@ When all sprint tasks are `done` or only `blocked` remain with no runnable work:
 
 ## Skills referenced
 
-- `skills/implement/SKILL.md`
-- `skills/verify/SKILL.md`
-- `skills/review/SKILL.md`
-- `skills/close/SKILL.md`
-- `skills/retro/SKILL.md` (end of sprint)
+- `skills/harness/implement/SKILL.md`
+- `skills/harness/verify/SKILL.md`
+- `skills/harness/review/SKILL.md`
+- `skills/harness/close/SKILL.md`
+- `skills/harness/retro/SKILL.md` (end of sprint)

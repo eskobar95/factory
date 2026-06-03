@@ -1,7 +1,8 @@
 # Tasks
 
 > Atomic tasks for harness execution. One task = one PR to `dev`.
-> Status values: `todo` | `in-progress` | `blocked` | `done`
+> Status values: `todo` | `in-progress` | `blocked` | `done`  
+> Mode values: `AFK` (agent runs alone) | `HITL` (human checkpoint required before/during implement)
 
 ---
 
@@ -10,6 +11,7 @@
 **Sprint:** S001
 **Milestone:** M001
 **Status:** todo
+**Mode:** AFK
 **Parallel group:** A
 **Blocked by:** none
 **Branch:** feature/S001/T001-task-slug
@@ -38,6 +40,7 @@
 ### Context for implementing agent
 
 - [Relevant files, patterns, existing code to follow]
+- For **HITL** tasks: state checkpoint and what human must approve before PR
 
 ### Definition of done
 

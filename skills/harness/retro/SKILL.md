@@ -45,9 +45,9 @@ Append to `.ai/logs/diary.md` (never overwrite prior entries):
 ### Factory improvement suggestions
 | Area | Suggestion | Target file |
 |------|------------|-------------|
-| skill | [e.g. add monorepo note to verify] | skills/verify/SKILL.md |
+| skill | [e.g. add monorepo note to verify] | skills/harness/verify/SKILL.md |
 | rule | [e.g. stricter API validation] | rules/base.mdc |
-| command | [e.g. clarify sprint ID format] | commands/run-sprint.md |
+| command | [e.g. clarify sprint ID format] | commands/harness/run-sprint.md |
 
 ### Next actions
 - [ ] /run-sprint S00y

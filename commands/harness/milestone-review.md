@@ -27,7 +27,7 @@ If not complete, report gaps and stop unless user forces partial review.
 
 ### 2. Run milestone CI
 
-- Invoke **Background Agent** with `skills/milestone-ci/SKILL.md`
+- Invoke **Background Agent** with `skills/harness/milestone-ci/SKILL.md`
 - Wait for structured report (`READY_FOR_STAGING_PR: yes | no`)
 
 ### 3. Generate milestone PR summary
