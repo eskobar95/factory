@@ -16,7 +16,9 @@ Run project quality scripts and return a **structured** result for harness. Fix 
 |-------|------------------|----------|
 | Typecheck | `pnpm typecheck` | `pnpm exec tsc --noEmit` |
 | Lint | `pnpm lint` | `pnpm exec eslint .` |
-| Test | `pnpm test` | `pnpm test:unit` |
+| Test | `pnpm test --run` | `pnpm test:unit --run` |
+
+> **`--run` is mandatory in agent/subagent context.** Without it Vitest starts in watch mode and the subagent hangs indefinitely.
 
 Read `.ai/context/TECHSPEC.md` **Commands** table for project-specific commands.
 

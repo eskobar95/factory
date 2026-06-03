@@ -1,0 +1,59 @@
+---
+description: Test conventions — Vitest/Jest setup, what to test, watch-mode trap in agents
+globs: "**/*.{test,spec}.{ts,tsx},**/__tests__/**"
+alwaysApply: false
+---
+
+# Testing rules
+
+## Test runner
+
+- Prefer **Vitest** for new projects (faster, native ESM, matches Vite/Next setup).
+- In agent sessions (subagents, CI): always pass **`--run`** flag to avoid watch mode hanging.
+
+```bash
+pnpm test --run          # not: pnpm test
+pnpm test --run path/to/file.test.ts   # narrowest pass first
+```
+
+## What to test
+
+- **New behavior** → at least one unit test per non-trivial function or hook.
+- **API endpoints** → at minimum happy path + one error/validation case.
+- **DB mutations** → cover the transaction boundary; test rollback if business-critical.
+- **UI components** → test user interactions and state changes, not implementation details.
+
+## What not to test
+
+- Framework internals (React render cycle, Next.js routing mechanics).
+- One-line getters/setters with no logic.
+- Exhaustive permutations of third-party library behavior.
+
+## Naming
+
+```ts
+describe("featureName", () => {
+  it("does X when Y", () => { ... })  // behaviour language, not method names
+})
+```
+
+## File placement
+
+Co-locate tests with source when possible:
+
+```
+src/
+  components/
+    Button.tsx
+    Button.test.tsx
+```
+
+Or under `__tests__/` for integration/e2e separation.
+
+## Coverage
+
+No coverage percentage target enforced by default. Target: **any new logic from a task has at least one test that would fail if the logic were removed**.
+
+## In Factory harness
+
+Verify skill runs `pnpm test --run` (not watch). If a test command hangs in a subagent, it is almost always missing `--run`.

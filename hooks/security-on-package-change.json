@@ -1,9 +1,2 @@
-{
-  "description": "Run npm/pnpm audit when package.json or lockfile changes. Appends summary to .ai/logs/diary.md.",
-  "hook": "afterFileEdit",
-  "entry": {
-    "command": ".cursor/hooks/run-security-audit.sh",
-    "failClosed": false,
-    "timeout": 180
-  }
-}
+# Note: This is a documentation artifact. The active config is hooks.json.
+# Hook: afterFileEdit on package.json/lockfile changes → run-security-audit.sh

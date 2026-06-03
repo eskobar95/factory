@@ -1,11 +1,17 @@
 #!/usr/bin/env bash
-# Factory hook: npm audit after package.json or pnpm-lock.yaml changes
-# Logs findings to .ai/logs/diary.md (does not block by default)
+# Factory hook: run security audit when package.json or lockfile changes.
+# Logs findings to .ai/logs/diary.md. Does not block by default.
 
 set -euo pipefail
 
 INPUT=$(cat)
-FILE_PATH=$(echo "${INPUT}" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('file_path',''))" 2>/dev/null || echo "")
+
+# Parse file_path
+if command -v jq >/dev/null 2>&1; then
+  FILE_PATH=$(printf '%s' "${INPUT}" | jq -r '.file_path // empty' 2>/dev/null || true)
+else
+  FILE_PATH=$(printf '%s' "${INPUT}" | grep -o '"file_path"[[:space:]]*:[[:space:]]*"[^"]*"' | sed 's/.*: *"//' | sed 's/"$//' || true)
+fi
 
 case "${FILE_PATH}" in
   *package.json|*pnpm-lock.yaml|*package-lock.json) ;;
@@ -15,27 +21,20 @@ esac
 DIARY=".ai/logs/diary.md"
 TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 
-run_audit() {
-  if command -v pnpm >/dev/null 2>&1 && pnpm audit --audit-level=high 2>&1; then
-    return 0
-  fi
-  if command -v npm >/dev/null 2>&1; then
-    npm audit --audit-level=high 2>&1 || true
-  fi
-}
-
-OUTPUT=$(run_audit 2>&1 | head -40 || true)
+# Run pnpm audit if available, fall back to npm — capture output regardless of exit code
+if command -v pnpm >/dev/null 2>&1; then
+  OUTPUT=$(pnpm audit --audit-level=high 2>&1 | head -40 || true)
+elif command -v npm >/dev/null 2>&1; then
+  OUTPUT=$(npm audit --audit-level=high 2>&1 | head -40 || true)
+else
+  exit 0
+fi
 
 mkdir -p "$(dirname "${DIARY}")"
 {
-  echo ""
-  echo "## Security audit — ${TIMESTAMP}"
-  echo ""
-  echo "Triggered by edit: \`${FILE_PATH}\`"
-  echo ""
-  echo '```'
-  echo "${OUTPUT}"
-  echo '```'
+  printf '\n## Security audit — %s\n\n' "${TIMESTAMP}"
+  printf 'Triggered by edit: `%s`\n\n' "${FILE_PATH}"
+  printf '```\n%s\n```\n' "${OUTPUT}"
 } >> "${DIARY}"
 
 exit 0

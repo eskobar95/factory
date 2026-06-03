@@ -12,6 +12,21 @@
         "failClosed": false,
         "timeout": 180
       }
+    ],
+    "stop": [
+      {
+        "command": ".cursor/hooks/run-stop-checks.sh",
+        "failClosed": false,
+        "loop_limit": 3,
+        "timeout": 60
+      }
+    ],
+    "beforeShellExecution": [
+      {
+        "command": ".cursor/hooks/guard-branches.sh",
+        "failClosed": true,
+        "timeout": 10
+      }
     ]
   }
 }

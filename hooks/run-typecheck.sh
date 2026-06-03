@@ -1,15 +1,19 @@
 #!/usr/bin/env bash
-# Factory hook: typecheck after agent file edit (TypeScript files only)
-# Exit 2 blocks the agent loop on failure (Cursor hooks contract)
+# Factory hook: typecheck after agent edits a TypeScript file.
+# Exit 2 → Cursor blocks next action (hooks contract).
 
 set -euo pipefail
 
 INPUT=$(cat)
-FILE_PATH=$(echo "${INPUT}" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('file_path',''))" 2>/dev/null || echo "")
 
-if [[ -z "${FILE_PATH}" ]]; then
-  exit 0
+# Parse file_path — prefer jq, fall back to grep
+if command -v jq >/dev/null 2>&1; then
+  FILE_PATH=$(printf '%s' "${INPUT}" | jq -r '.file_path // empty' 2>/dev/null || true)
+else
+  FILE_PATH=$(printf '%s' "${INPUT}" | grep -o '"file_path"[[:space:]]*:[[:space:]]*"[^"]*"' | sed 's/.*: *"//' | sed 's/"$//' || true)
 fi
+
+[[ -z "${FILE_PATH}" ]] && exit 0
 
 case "${FILE_PATH}" in
   *.ts|*.tsx) ;;
@@ -17,15 +21,19 @@ case "${FILE_PATH}" in
 esac
 
 if ! command -v pnpm >/dev/null 2>&1; then
-  echo "Factory typecheck hook: pnpm not found" >&2
-  exit 2
+  echo "Factory typecheck hook: pnpm not found — skipping" >&2
+  exit 0
 fi
 
-if ! pnpm run typecheck --if-present 2>/dev/null; then
-  if ! pnpm exec tsc --noEmit 2>&1; then
-    echo "Typecheck failed. Fix errors before continuing." >&2
-    exit 2
-  fi
+# Run project typecheck script if defined, otherwise fall back to tsc --noEmit
+if pnpm run typecheck --if-present 2>&1; then
+  exit 0
 fi
 
-exit 0
+# Explicit fallback — tsc directly
+if pnpm exec tsc --noEmit 2>&1; then
+  exit 0
+fi
+
+echo "Typecheck failed. Fix TypeScript errors before continuing." >&2
+exit 2

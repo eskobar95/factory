@@ -74,6 +74,7 @@ echo "==> Scaffolding .ai/"
 copy_if_missing "${FACTORY_SOURCE}/templates/CONTEXT.md" ".ai/context/CONTEXT.md"
 copy_if_missing "${FACTORY_SOURCE}/templates/PRD.md" ".ai/context/PRD.md"
 copy_if_missing "${FACTORY_SOURCE}/templates/TECHSPEC.md" ".ai/context/TECHSPEC.md"
+copy_if_missing "${FACTORY_SOURCE}/templates/ADR.md" ".ai/context/ADR/ADR-000-template.md"
 copy_if_missing "${FACTORY_SOURCE}/templates/milestones.md" ".ai/planning/milestones.md"
 touch ".ai/planning/sprints.md"
 copy_if_missing "${FACTORY_SOURCE}/templates/tasks.md" ".ai/planning/tasks.md"
@@ -128,7 +129,7 @@ if [[ -f "${FACTORY_SOURCE}/hooks/hooks.json" ]]; then
     echo "    kept existing .cursor/hooks.json (set FORCE_HOOKS=1 to overwrite)"
   fi
 fi
-for script in run-typecheck.sh run-security-audit.sh; do
+for script in run-typecheck.sh run-security-audit.sh run-stop-checks.sh guard-branches.sh; do
   if [[ -f "${FACTORY_SOURCE}/hooks/${script}" ]]; then
     chmod +x "${FACTORY_SOURCE}/hooks/${script}" 2>/dev/null || true
   fi
