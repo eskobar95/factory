@@ -72,7 +72,7 @@ See also: [commands/README.md](commands/README.md) · [skills/README.md](skills/
 
 ```bash
 # From your project root (first time)
-git submodule add git@github.com:eskobar95/factory.git .factory/kit
+git submodule add https://github.com/eskobar95/factory.git .factory/kit
 ./.factory/kit/install.sh
 
 # Update kit in an existing project

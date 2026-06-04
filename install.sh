@@ -11,7 +11,7 @@
 
 set -euo pipefail
 
-FACTORY_REPO="${FACTORY_REPO:-git@github.com:eskobar95/factory.git}"
+FACTORY_REPO="${FACTORY_REPO:-https://github.com/eskobar95/factory.git}"
 FACTORY_KIT=".factory/kit"
 FACTORY_WS=".factory"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

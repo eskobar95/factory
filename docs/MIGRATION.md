@@ -61,7 +61,7 @@ mkdir -p .factory/context .factory/planning .factory/logs .factory/skills
 # move .ai/* if present — install.sh does this too
 
 # 4. Re-add at new path
-git submodule add git@github.com:eskobar95/factory.git .factory/kit
+git submodule add https://github.com/eskobar95/factory.git .factory/kit
 git -C .factory/kit checkout "$OLD_SHA"  # optional: pin same version
 
 # 5. Install symlinks + scaffold
@@ -79,7 +79,7 @@ Before:
 ```ini
 [submodule ".factory"]
   path = .factory
-  url = git@github.com:eskobar95/factory.git
+  url = https://github.com/eskobar95/factory.git
 ```
 
 After:
@@ -87,7 +87,7 @@ After:
 ```ini
 [submodule ".factory/kit"]
   path = .factory/kit
-  url = git@github.com:eskobar95/factory.git
+  url = https://github.com/eskobar95/factory.git
 ```
 
 ## Path reference changes
