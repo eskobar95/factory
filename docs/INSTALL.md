@@ -6,7 +6,7 @@ How to add Factory to a project and what gets created on disk.
 
 - Git repository (local or remote)
 - [Cursor](https://cursor.com) 3.3+ with Agent mode
-- SSH access to `git@github.com:eskobar-dev/factory.git` (private repo)
+- SSH access to `git@github.com:eskobar95/factory.git` (public repo)
 - pnpm-based project recommended (hooks assume `pnpm typecheck`, `lint`, `test`)
 
 ## First install
@@ -14,7 +14,7 @@ How to add Factory to a project and what gets created on disk.
 Run from **your project root** (not from inside the factory kit repo):
 
 ```bash
-git submodule add git@github.com:eskobar-dev/factory.git .factory/kit
+git submodule add git@github.com:eskobar95/factory.git .factory/kit
 ./.factory/kit/install.sh
 ```
 

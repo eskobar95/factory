@@ -1,6 +1,6 @@
 # Factory — Personal AI Dev OS
 
-Private GitHub repo (`eskobar-dev/factory`) — Cursor commands, skills, rules, and hooks for solo multi-project development.
+Public GitHub repo (`eskobar95/factory`) — Cursor commands, skills, rules, and hooks for solo multi-project development.
 
 ## What is Factory?
 
@@ -48,7 +48,7 @@ Tasks use **vertical slices**, **parallel groups** (A, B, C…), and **Mode: AFK
 ## Repo layout (this kit)
 
 ```
-factory/                    ← you are here (eskobar-dev/factory)
+factory/                    ← you are here (eskobar95/factory)
   commands/
     planning/               align, to-prd, to-backlog, to-plan
     harness/                run-sprint, run-task, milestone-review, …
@@ -72,7 +72,7 @@ See also: [commands/README.md](commands/README.md) · [skills/README.md](skills/
 
 ```bash
 # From your project root (first time)
-git submodule add git@github.com:eskobar-dev/factory.git .factory/kit
+git submodule add git@github.com:eskobar95/factory.git .factory/kit
 ./.factory/kit/install.sh
 
 # Update kit in an existing project
@@ -89,7 +89,7 @@ Full guide: [docs/INSTALL.md](docs/INSTALL.md)
 ```
 your-project/
   .factory/
-    kit/           ← submodule (eskobar-dev/factory — do not edit)
+    kit/           ← submodule (eskobar95/factory — do not edit)
     context/       PRD, TECHSPEC, CONTEXT, ADR/, STACK
     planning/      milestones.md, sprints.md, tasks.md
     specs/         BDD .feature files (optional)
@@ -143,4 +143,4 @@ main ← you merge staging here
 
 ## License
 
-Private — solo use.
+Public — solo use.

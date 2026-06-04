@@ -27,4 +27,4 @@ Both load from the kit symlink — update via `./.factory/kit/update.sh`.
 
 Prefer **project rules** in your repo's `.cursor/rules/` (non-symlinked files) for one-off overrides. Factory kit rules stay read-only in `.factory/kit/rules/`.
 
-If you need a permanent Factory-wide change, edit here and open a PR in `eskobar-dev/factory`.
+If you need a permanent Factory-wide change, edit here and open a PR in `eskobar95/factory`.

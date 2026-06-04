@@ -70,4 +70,4 @@ Drop project-specific `SKILL.md` folders here. They symlink to `.cursor/skills/p
 /factory-update
 ```
 
-Do **not** commit changes inside `kit/` from this project — open PRs in `eskobar-dev/factory` instead.
+Do **not** commit changes inside `kit/` from this project — open PRs in `eskobar95/factory` instead.

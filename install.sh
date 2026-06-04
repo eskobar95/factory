@@ -2,7 +2,7 @@
 # Factory install — run from YOUR PROJECT ROOT (not from inside the kit repo)
 #
 # Creates:
-#   .factory/kit/     ← git submodule (eskobar-dev/factory — read-only kit)
+#   .factory/kit/     ← git submodule (eskobar95/factory — read-only kit)
 #   .factory/context/ ← PRD, TECHSPEC, CONTEXT, ADR, STACK (your project)
 #   .factory/planning/← milestones, sprints, tasks
 #   .factory/logs/    ← diary, decisions
@@ -11,7 +11,7 @@
 
 set -euo pipefail
 
-FACTORY_REPO="${FACTORY_REPO:-git@github.com:eskobar-dev/factory.git}"
+FACTORY_REPO="${FACTORY_REPO:-git@github.com:eskobar95/factory.git}"
 FACTORY_KIT=".factory/kit"
 FACTORY_WS=".factory"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

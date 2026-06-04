@@ -8,7 +8,7 @@ How Factory separates **kit** (shared, versioned) from **workspace** (project-sp
 ┌─────────────────────────────────────────────────────────────┐
 │  your-project/                                              │
 │                                                             │
-│  .factory/kit/     ← submodule (eskobar-dev/factory)            │
+│  .factory/kit/     ← submodule (eskobar95/factory)            │
 │    commands/       read-only kit — update via submodule     │
 │    skills/                                                  │
 │    rules/                                                   │
@@ -31,7 +31,7 @@ How Factory separates **kit** (shared, versioned) from **workspace** (project-sp
 └─────────────────────────────────────────────────────────────┘
 ```
 
-**Rule of thumb:** Never edit files inside `.factory/kit/` in a project. Propose changes in the `eskobar-dev/factory` repo, then `update.sh`.
+**Rule of thumb:** Never edit files inside `.factory/kit/` in a project. Propose changes in the `eskobar95/factory` repo, then `update.sh`.
 
 ## Planning track
 

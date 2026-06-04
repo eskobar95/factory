@@ -68,7 +68,7 @@ Append to `.factory/logs/diary.md` (never overwrite prior entries):
 
 ## Self-improve loop (v1)
 
-- Suggestions are **documentation only** — do not auto-open PRs to `eskobar-dev/factory` unless user asks (v2 question in PRD)
+- Suggestions are **documentation only** — do not auto-open PRs to `eskobar95/factory` unless user asks (v2 question in PRD)
 - If user approves, they can copy suggestions into factory repo manually
 
 ## Optional: decisions log
