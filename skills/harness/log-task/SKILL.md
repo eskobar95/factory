@@ -14,6 +14,7 @@ description: Append a per-task entry to .ai/logs/diary.md when a harness task fi
 | Task → `in-progress` | Lead harness (optional short "started" entry) |
 | Task → `done` after close | Lead harness (**required**) |
 | Task → `blocked` after 2 failed cycles | Lead harness (**required**) |
+| Subagent crash / no YAML | Lead harness (**required**, status `error`) |
 | HITL skipped (no checkpoint) | Lead harness (**required**, status `skipped`) |
 
 Subagents do **not** write diary entries — they return structured results; lead appends diary.
@@ -24,7 +25,7 @@ Subagents do **not** write diary entries — they return structured results; lea
 task_id: T001
 sprint_id: S001
 milestone_id: M001
-status: done | blocked | skipped | started
+status: done | blocked | skipped | started | error
 branch: feature/S001/T001-slug
 pr_url: optional
 revision_cycles: 0-2
@@ -33,6 +34,8 @@ summary: one-line outcome
 verify: pass | fail | n/a
 review_phase1: pass | fail | n/a
 review_phase2_thermo: pass | fail | n/a
+ci: pass | fail | local-only | n/a
+error_reason: optional (status error)
 ```
 
 ## Procedure
@@ -65,6 +68,7 @@ review_phase2_thermo: pass | fail | n/a
 | Verify | pass |
 | Review (task fit) | pass |
 | Review (thermo-nuclear) | pass |
+| CI | pass |
 | Revision cycles | 0 |
 
 ### Unblocked
@@ -102,6 +106,18 @@ review_phase2_thermo: pass | fail | n/a
 
 **Sprint:** S[id] | **Status:** skipped
 **Reason:** HITL — awaiting human checkpoint before implement
+```
+
+### Terminal: error (subagent failure)
+
+```markdown
+---
+
+## Task T[id] — [title] — [YYYY-MM-DD]
+
+**Sprint:** S[id] | **Status:** error
+**Reason:** [error_reason — timeout, crash, malformed YAML, no output]
+**Next:** /run-task T[id] after investigation
 ```
 
 ### Optional: started

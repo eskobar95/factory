@@ -52,11 +52,21 @@ Typecheck: pass | Lint: pass | Tests: pass
 
 Create PR via `gh pr create` if GitHub CLI available; otherwise instruct user with title/body.
 
+## Fix CI (required before done)
+
+After PR exists, run `skills/harness/fix-ci/SKILL.md`:
+
+1. Poll `gh pr checks` until pass or max 3 fix iterations
+2. Task is **not done** if CI still failing — set `blocked` with failing check names
+3. Include `ci: pass | fail` in harness YAML
+
+If repo has no GitHub Actions, fix-ci runs local verify as fallback and notes `ci: local-only`.
+
 ## Update tasks.md
 
 In `.ai/planning/tasks.md` for this task:
 
-- Set `**Status:** done`
+- Set `**Status:** done` only when **CI green** (or local-only pass)
 - Optional: add `**PR:** #123` under metadata
 
 ## Unblock next work
@@ -77,7 +87,7 @@ Return YAML for **lead harness** (see `skills/harness/harness/SKILL.md`). Lead r
 **Unblocked tasks:** T00y, T00z | none
 ```
 
-Include in harness YAML: `pr_url`, `unblocked_tasks`, `review_phase1`, `review_phase2_thermo`.
+Include in harness YAML: `pr_url`, `unblocked_tasks`, `review_phase1`, `review_phase2_thermo`, `ci`, `ci_iterations`.
 
 ## Do not
 

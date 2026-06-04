@@ -26,6 +26,11 @@
         "command": ".cursor/hooks/guard-branches.sh",
         "failClosed": true,
         "timeout": 10
+      },
+      {
+        "command": ".cursor/hooks/guard-secrets.sh",
+        "failClosed": true,
+        "timeout": 10
       }
     ]
   }

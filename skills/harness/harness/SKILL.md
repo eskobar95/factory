@@ -19,7 +19,7 @@ You are the **lead agent** for a sprint. You **orchestrate only** — you do not
 Run this checklist; stop and report if failing:
 
 - [ ] Sprint exists in `sprints.md`
-- [ ] Git branch `dev` exists (`git rev-parse dev` or `origin/dev`)
+- [ ] Git branch `dev` exists — if not, tell user to run `/bootstrap-branches`
 - [ ] At least one runnable task for this sprint (or report "nothing to run")
 - [ ] Set sprint **Status** to `active` in `sprints.md`
 - [ ] List runnable tasks by parallel group; list **HITL** tasks as skipped until user confirms
@@ -46,7 +46,7 @@ Status: `todo` | `in-progress` | `blocked` | `done`
 2. Skip `done`
 3. Group by **Parallel group** (A, B, C…)
 4. Runnable when: `todo`, blockers satisfied, **Mode: AFK**
-5. **HITL** → set `blocked` or leave `todo`, log via `log-task` as `skipped`, do not dispatch
+5. **HITL** → skip unless `**HITL approved:**` present; else log as `skipped`, do not dispatch
 6. Run groups in order: A → B → C …
 
 ## Mandatory subagent dispatch (non-negotiable)
@@ -76,13 +76,14 @@ Run in order:
 2. skills/harness/verify/SKILL.md — if FAIL, retry implement once (revision 1)
 3. skills/harness/review/SKILL.md — if FAIL, retry implement once (revision 2 max)
 4. skills/harness/close/SKILL.md — only if verify + review PASS
+5. skills/harness/fix-ci/SKILL.md — until PR checks green (max 3 iterations)
 
-Max 2 full revision cycles. If still failing, set task Status blocked in tasks.md with **Blocker:** reason.
+Max 2 full revision cycles (implement→verify→review). If still failing, blocked.
 
 Return ONLY this YAML block:
 
 task_id: Txxx
-status: done | blocked
+status: done | blocked | error
 branch: ...
 pr_url: ...
 revision_cycles: N
@@ -91,7 +92,10 @@ summary: one line
 verify: pass | fail
 review_phase1: pass | fail
 review_phase2_thermo: pass | fail
+ci: pass | fail | local-only | n/a
+ci_iterations: N
 unblocked_tasks: T00y, ... or none
+error_reason: ... (only if status: error)
 ```
 
 ### After each subagent returns (lead duties)
@@ -99,10 +103,19 @@ unblocked_tasks: T00y, ... or none
 Process results **in task ID order** for consistency:
 
 1. Parse YAML from subagent output
-2. Update `.ai/planning/tasks.md` (status, PR, blocker)
-3. **Required:** run `skills/harness/log-task/SKILL.md` with parsed fields
-4. Optional: `log-task` with `started` when setting `in-progress` before dispatch
-5. Re-evaluate **Blocked by** for downstream tasks
+2. **If YAML missing or malformed:** treat as `status: error`, set task `blocked`, run log-task with `error_reason`, continue other tasks
+3. Update `.ai/planning/tasks.md` (status, PR, blocker) — `done` only if `status: done` AND `ci: pass` or `ci: local-only`
+4. **Required:** run `skills/harness/log-task/SKILL.md` with parsed fields
+5. Optional: `log-task` with `started` when setting `in-progress` before dispatch
+6. Re-evaluate **Blocked by** for downstream tasks
+
+### Single-task mode
+
+When invoked via `/run-task Txxx` (not full sprint):
+
+- Run preflight for one task only
+- Dispatch one Task subagent
+- Same post-processing and log-task rules
 
 ## Per-task pipeline (inside subagent)
 
@@ -112,6 +125,7 @@ Process results **in task ID order** for consistency:
 | verify | verify | → implement (cycle 1) |
 | review | review + thermo-nuclear | → implement (cycle 2 max) |
 | close | close | blocked if PR fails |
+| fix-ci | fix-ci | blocked if checks fail after 3 iterations |
 
 ## Revision loop
 
@@ -151,5 +165,7 @@ When no runnable AFK work remains:
 - `skills/harness/review/SKILL.md`
 - `skills/harness/thermo-nuclear-code-quality-review/SKILL.md`
 - `skills/harness/close/SKILL.md`
+- `skills/harness/fix-ci/SKILL.md`
+- `skills/harness/hitl-checkpoint/SKILL.md` (via `/hitl-checkpoint`, not subagent)
 - `skills/harness/log-task/SKILL.md` (**lead only, after each task**)
 - `skills/harness/retro/SKILL.md`

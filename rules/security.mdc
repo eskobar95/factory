@@ -1,0 +1,37 @@
+---
+description: Security boundaries — secrets, webhooks, SSRF, validation
+alwaysApply: true
+---
+
+# Security rules
+
+## Secrets
+
+- Never commit `.env`, `.env.local`, credentials JSON, or private keys.
+- Never log tokens, cookies, or `Authorization` headers — redact in errors.
+- Server-only env vars: no `NEXT_PUBLIC_` prefix for secrets.
+
+## API & webhooks
+
+- Validate all inbound body/query at route boundaries (zod or equivalent).
+- Verify webhook signatures (HMAC) before processing; constant-time compare.
+- Idempotency keys for webhook handlers that mutate state.
+
+## SSRF
+
+- Do not pass user-controlled URLs to server-side `fetch` without allowlist.
+- No arbitrary URL preview or proxy endpoints without validation.
+
+## Authz
+
+- Enforce auth checks on every sensitive mutation, not only UI.
+- Server Actions and Route Handlers that change data must verify session/role.
+
+## Dependencies
+
+- Run `pnpm audit` before milestone merge; no unwaived high/critical CVEs.
+
+## Factory hooks
+
+- `guard-secrets.sh` blocks staging `.env` files in git commands.
+- Stop hook scans diffs for common secret patterns.

@@ -10,9 +10,9 @@ Implement **one** task from `.ai/planning/tasks.md`. Do not run verify/review/cl
 ## Before coding
 
 1. Read the full task section (`## T[id]`)
-2. Read `.ai/context/TECHSPEC.md` and `.ai/context/PRD.md` (relevant sections only)
+2. Read `.ai/context/TECHSPEC.md`, `.ai/context/PRD.md`, and `.ai/context/CONTEXT.md` (glossary — use correct domain terms)
 3. Read **Context for implementing agent** and explore cited files
-4. Confirm base branch exists: `dev` (create from default if missing and user allows)
+4. Confirm base branch exists: `dev` (if missing, user runs `/bootstrap-branches`)
 
 ## Git workflow
 
@@ -24,6 +24,19 @@ git checkout -b feature/[sprint]/[task-id]-[slug]
 ```
 
 Use exact **Branch** from task metadata.
+
+### Parallel groups — rebase before push
+
+If another task in the same **Parallel group** may have merged to `dev` while you worked:
+
+```bash
+git fetch origin dev
+git rebase origin/dev
+# resolve conflicts if any; run verify locally
+git push --force-with-lease origin HEAD
+```
+
+Only rebase **your task branch**, never `dev`/`staging`/`main`.
 
 ## Implementation rules
 

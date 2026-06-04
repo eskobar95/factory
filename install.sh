@@ -76,21 +76,14 @@ copy_if_missing "${FACTORY_SOURCE}/templates/PRD.md" ".ai/context/PRD.md"
 copy_if_missing "${FACTORY_SOURCE}/templates/TECHSPEC.md" ".ai/context/TECHSPEC.md"
 copy_if_missing "${FACTORY_SOURCE}/templates/ADR.md" ".ai/context/ADR/ADR-000-template.md"
 copy_if_missing "${FACTORY_SOURCE}/templates/milestones.md" ".ai/planning/milestones.md"
-touch ".ai/planning/sprints.md"
+copy_if_missing "${FACTORY_SOURCE}/templates/sprints.md" ".ai/planning/sprints.md"
 copy_if_missing "${FACTORY_SOURCE}/templates/tasks.md" ".ai/planning/tasks.md"
 touch ".ai/logs/diary.md"
 touch ".ai/logs/decisions.md"
-touch ".ai/context/STACK.md"
+copy_if_missing "${FACTORY_SOURCE}/templates/STACK.md" ".ai/context/STACK.md"
 
 if [[ ! -s ".ai/planning/sprints.md" ]]; then
-  cat > ".ai/planning/sprints.md" << 'EOF'
-# Sprints
-
-| ID | Milestone | Goal | Status |
-|----|-----------|------|--------|
-| S001 | M001 | [Sprint goal] | planned |
-
-EOF
+  copy_if_missing "${FACTORY_SOURCE}/templates/sprints.md" ".ai/planning/sprints.md"
 fi
 
 if [[ ! -s ".ai/logs/diary.md" ]]; then
@@ -131,7 +124,7 @@ if [[ -f "${FACTORY_SOURCE}/hooks/hooks.json" ]]; then
   ln -sf "../${FACTORY_PATH}/hooks/hooks.json" .cursor/hooks.json
   echo "    .cursor/hooks.json -> ../${FACTORY_PATH}/hooks/hooks.json (symlink)"
 fi
-for script in run-typecheck.sh run-security-audit.sh run-stop-checks.sh guard-branches.sh; do
+for script in run-typecheck.sh run-security-audit.sh run-stop-checks.sh guard-branches.sh guard-secrets.sh; do
   if [[ -f "${FACTORY_SOURCE}/hooks/${script}" ]]; then
     chmod +x "${FACTORY_SOURCE}/hooks/${script}" 2>/dev/null || true
   fi

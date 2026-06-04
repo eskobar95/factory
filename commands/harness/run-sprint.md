@@ -11,9 +11,12 @@ Execute sprint tasks via **lead harness** + **parallel Task subagents**. Updates
 ## Prerequisites
 
 - `.ai/planning/tasks.md` with sprint tasks and **Parallel group** / **Mode**
-- Branch `dev` exists
+- Branch `dev` exists (run `/bootstrap-branches` if not)
+- HITL tasks approved via `/hitl-checkpoint` before dispatch
 - Factory harness at `.cursor/skills/factory/harness/`
 - Cursor 3.3+ with **Task** tool (subagents)
+
+Task pipeline per subagent: **implement → verify → review → close → fix-ci** (PR CI must pass)
 
 ## Lead agent obligations
 

@@ -49,10 +49,12 @@ pnpm build 2>&1
 ### 4. Full test suite
 
 ```bash
-pnpm test 2>&1
+pnpm test --run 2>&1
 ```
 
 **Pass:** exit code 0
+
+> Use `--run` — never watch mode in Background Agent.
 
 ## Report format
 
