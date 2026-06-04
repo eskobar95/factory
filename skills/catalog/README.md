@@ -24,8 +24,8 @@ Useful complements to Factory:
 | Skill | Use when |
 |-------|----------|
 | `grill-me` | No codebase (life, greenfield idea) |
-| `grill-with-docs` | Reference only — Factory `/align` replaces for `.ai/` layout |
-| `to-prd` | Reference — Factory `planning/to-prd` writes to `.ai/` |
+| `grill-with-docs` | Reference only — Factory `/align` replaces for `.factory/` layout |
+| `to-prd` | Reference — Factory `planning/to-prd` writes to `.factory/` |
 | `to-issues` | Reference — Factory `to-backlog` → `tasks.md` not GitHub issues |
 | `tdd` | Behavior-first implementation inside a task |
 | `triage` | Bug/issue hygiene |
@@ -36,7 +36,7 @@ Useful complements to Factory:
 Put project-specific skills in:
 
 ```
-.ai/skills/
+.factory/skills/
 ```
 
 `install.sh` symlinks them to `.cursor/skills/project/`.

@@ -16,8 +16,8 @@ Provide your macro idea in the same message or reference a brief file.
 
 ## Outputs
 
-- Updates `.ai/context/CONTEXT.md` (glossary)
-- May add `.ai/context/ADR/*.md`
+- Updates `.factory/context/CONTEXT.md` (glossary)
+- May add `.factory/context/ADR/*.md`
 - Does **not** write tasks or full PRD
 
 ## Next

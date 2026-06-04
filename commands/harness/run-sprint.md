@@ -10,7 +10,7 @@ Execute sprint tasks via **lead harness** + **parallel Task subagents**. Updates
 
 ## Prerequisites
 
-- `.ai/planning/tasks.md` with sprint tasks and **Parallel group** / **Mode**
+- `.factory/planning/tasks.md` with sprint tasks and **Parallel group** / **Mode**
 - Branch `dev` exists (run `/bootstrap-branches` if not)
 - HITL tasks approved via `/hitl-checkpoint` before dispatch
 - Factory harness at `.cursor/skills/factory/harness/`
@@ -25,7 +25,7 @@ The session running this command is the **lead**. It MUST:
 1. Run harness **preflight** checklist
 2. Dispatch each parallel group with **multiple Task calls in one turn** (`run_in_background: true`)
 3. **Not** implement AFK tasks inline in the lead session
-4. After each subagent: update `tasks.md` + run **log-task** → append `.ai/logs/diary.md`
+4. After each subagent: update `tasks.md` + run **log-task** → append `.factory/logs/diary.md`
 5. After all groups: run **retro** (sprint summary in diary)
 
 ## Procedure
@@ -56,7 +56,7 @@ The session running this command is the **lead**. It MUST:
 | Diary entries | n task + 1 retro |
 
 **PRs:** [links]
-**Diary:** .ai/logs/diary.md
+**Diary:** .factory/logs/diary.md
 **Next:** /run-sprint S00y | /milestone-review M00x
 ```
 

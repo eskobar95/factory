@@ -33,9 +33,9 @@ mktemp -t handoff-XXXXXX.md
 
 Reference by path only — do not paste full content:
 
-- `.ai/context/PRD.md`, `TECHSPEC.md`, `CONTEXT.md`
-- `.ai/planning/tasks.md`, `milestones.md`
-- `.ai/context/ADR/*`
+- `.factory/context/PRD.md`, `TECHSPEC.md`, `CONTEXT.md`
+- `.factory/planning/tasks.md`, `milestones.md`
+- `.factory/context/ADR/*`
 - Branches, PR URLs, commit SHAs
 
 Handoff is the **glue** between artifacts.
@@ -57,7 +57,7 @@ Handoff is the **glue** between artifacts.
 - [ ] …
 
 ## Artifacts (paths only)
-- PRD: .ai/context/PRD.md
+- PRD: .factory/context/PRD.md
 - …
 
 ## Suggested skills / commands

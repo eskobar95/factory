@@ -38,6 +38,31 @@
 
 ---
 
+## User journeys
+
+Lightweight paths through the app — **why** the feature exists and **how** users move through it. Keep each journey short; link tasks and BDD scenarios to these IDs.
+
+### J001 — [Journey title]
+
+**Problem:** [What the user is trying to solve]
+**Goal:** [What success looks like for the user]
+**Steps:**
+
+1. [User action / system response]
+2. [Next step]
+3. [Outcome]
+
+**BDD spec:** `.factory/specs/J001-slug.feature` (optional — executable when using Cucumber/Playwright BDD)
+**Tasks:** T001, T002
+
+### J002 — [Another journey]
+
+**Problem:** …
+**Goal:** …
+**Steps:** …
+
+---
+
 ## System overview
 
 [High-level description of what we're building. Diagram or bullet list.]

@@ -1,6 +1,6 @@
 ---
 name: align
-description: Grill-style alignment against .ai context and codebase — sharpen language, update CONTEXT.md and ADRs (Matt Pocock grill-with-docs pattern)
+description: Grill-style alignment against .factory context and codebase — sharpen language, update CONTEXT.md and ADRs (Matt Pocock grill-with-docs pattern)
 ---
 
 # Align skill
@@ -11,7 +11,7 @@ Pressure-test a **macro idea or plan** before writing PRD or tasks. This is Fact
 
 - New feature or product direction; ambiguity in scope or terminology
 - Before `/to-prd` or `/to-backlog`
-- When `.ai/context/CONTEXT.md` or ADRs may be stale
+- When `.factory/context/CONTEXT.md` or ADRs may be stale
 
 ## When not to use
 
@@ -22,9 +22,9 @@ Pressure-test a **macro idea or plan** before writing PRD or tasks. This is Fact
 ## Inputs
 
 - User's macro idea, brief, or partial plan
-- `.ai/context/CONTEXT.md` (create from template if missing)
-- `.ai/context/PRD.md`, `TECHSPEC.md`, `STACK.md` if they exist
-- `.ai/context/ADR/` — read existing ADRs
+- `.factory/context/CONTEXT.md` (create from template if missing)
+- `.factory/context/PRD.md`, `TECHSPEC.md`, `STACK.md` if they exist
+- `.factory/context/ADR/` — read existing ADRs
 - Codebase: `package.json`, key modules, README
 
 ## Behavior (grill-with-docs rules)
@@ -35,8 +35,8 @@ Pressure-test a **macro idea or plan** before writing PRD or tasks. This is Fact
 4. **Challenge language** against `CONTEXT.md` — sharpen fuzzy terms
 5. **Cross-reference code** when terms should match implementation
 6. **Update docs inline** as decisions land:
-   - `.ai/context/CONTEXT.md` — shared glossary per bounded context
-   - `.ai/context/ADR/` — only when decision is hard to reverse, surprising without context, and a real trade-off
+   - `.factory/context/CONTEXT.md` — shared glossary per bounded context
+   - `.factory/context/ADR/` — only when decision is hard to reverse, surprising without context, and a real trade-off
 
 ## CONTEXT.md updates
 
@@ -51,9 +51,11 @@ Add or refine entries:
 
 ## ADR creation
 
-Filename: `.ai/context/ADR/ADR-NNN-short-title.md`
+Filename: `.factory/context/ADR/ADR-NNN-short-title.md`
 
-Use template sections: Context, Decision, Consequences.
+Use template sections: Context, Decision, **Scope**, **Enforcement**, **How to fix**, Consequences.
+
+When the decision affects code structure, always fill **Enforcement** (tool + command) and **How to fix** so hooks and agents can link back to this ADR.
 
 ## Session end
 
@@ -67,7 +69,7 @@ Do **not** write full PRD or tasks in this skill. Output:
 **Suggested next skills/commands:**
 - `/to-prd` — when problem/goals/stack are clear
 - `/to-backlog` — if PRD already exists
-- `/handoff [focus]` — if context window is large; reference .ai paths only
+- `/handoff [focus]` — if context window is large; reference `.factory/` paths only
 ```
 
 ## Do not
@@ -79,4 +81,5 @@ Do **not** write full PRD or tasks in this skill. Output:
 ## Pairs with
 
 - `skills/planning/to-prd/SKILL.md`
+- `skills/planning/adr-lookup/SKILL.md`
 - `skills/productivity/handoff/SKILL.md`

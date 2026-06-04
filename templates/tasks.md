@@ -15,6 +15,9 @@
 **Parallel group:** A
 **Blocked by:** none
 **Branch:** feature/S001/T001-task-slug
+**PRD journey:** J001
+**BDD scenarios:** J001-example-journey.feature — "Happy path through the journey"
+**ADRs:** ADR-001
 
 ### Slice objective
 

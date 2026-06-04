@@ -9,7 +9,7 @@
 
 - One section per **term** the team and agents must use consistently
 - Disambiguate terms that could mean multiple things
-- Link surprising decisions to `.ai/context/ADR/` instead of long prose here
+- Link surprising decisions to `.factory/context/ADR/` instead of long prose here
 
 ---
 

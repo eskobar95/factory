@@ -1,6 +1,6 @@
 # Technical specification — [Project name]
 
-> Aligns with `.ai/context/PRD.md`. Update when stack or constraints change.
+> Aligns with `.factory/context/PRD.md`. Update when stack or constraints change.
 
 ---
 
@@ -60,6 +60,27 @@ main
 | Lint | `pnpm lint` | Every task |
 | Test | `pnpm test` | Every task |
 | Audit | `npm audit` or `pnpm audit` | Milestone review |
+| Architecture | `[e.g. pnpm lint:architecture]` | When ADR defines import boundaries — **same in CI** |
+
+---
+
+## Testing
+
+### Unit / integration
+
+| Script | Command | Notes |
+|--------|---------|-------|
+| Unit | `pnpm test --run` | Vitest — always use `--run` in agent context |
+
+### BDD (optional)
+
+Executable specs live in `.factory/specs/` (Gherkin). Link scenarios to PRD journeys (J001…).
+
+| Item | Value |
+|------|-------|
+| Runner | [e.g. `@cucumber/cucumber` + Playwright / none yet] |
+| Run one feature | `[e.g. pnpm test:bdd -- .factory/specs/J001-*.feature]` |
+| E2E constraints | [e.g. E2E must not import DB modules — see ADR-NNN] |
 
 ---
 

@@ -9,9 +9,9 @@ Run as **Background Agent** (Cursor 3.5+) when `/milestone-review` invokes miles
 
 ## Prerequisites
 
-- All sprints in milestone marked `done` in `.ai/planning/sprints.md` (or user override)
+- All sprints in milestone marked `done` in `.factory/planning/sprints.md` (or user override)
 - Branch `dev` contains merged task work
-- Project scripts from `.ai/context/TECHSPEC.md`
+- Project scripts from `.factory/context/TECHSPEC.md`
 
 ## Gates (run in order)
 
@@ -58,7 +58,7 @@ pnpm test --run 2>&1
 
 ## Report format
 
-Write to a temp section for milestone-review command (and optionally `.ai/logs/diary.md`):
+Write to a temp section for milestone-review command (and optionally `.factory/logs/diary.md`):
 
 ```markdown
 ## Milestone CI — M[id]

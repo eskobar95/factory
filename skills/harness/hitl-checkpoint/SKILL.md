@@ -9,7 +9,7 @@ Run when user invokes `/hitl-checkpoint T00x` after reviewing design, mockup, or
 
 ## Prerequisites
 
-- Task exists in `.ai/planning/tasks.md` with **Mode:** HITL
+- Task exists in `.factory/planning/tasks.md` with **Mode:** HITL
 - User has stated approval (or changes to apply before run)
 
 ## Procedure
@@ -20,7 +20,7 @@ Run when user invokes `/hitl-checkpoint T00x` after reviewing design, mockup, or
    - Add under task metadata: `**HITL approved:** YYYY-MM-DD — [one-line note]`
    - Set **Status:** `todo` (ready for harness)
    - Optionally change **Mode:** to `AFK` if no further human gate needed mid-task
-4. Append brief entry to `.ai/logs/diary.md`:
+4. Append brief entry to `.factory/logs/diary.md`:
 
 ```markdown
 ---

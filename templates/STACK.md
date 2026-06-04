@@ -1,6 +1,6 @@
 # Stack — [Project name]
 
-> Short mirror of `.ai/context/TECHSPEC.md` stack table. Update when TECHSPEC changes.
+> Short mirror of `.factory/context/TECHSPEC.md` stack table. Update when TECHSPEC changes.
 
 ---
 

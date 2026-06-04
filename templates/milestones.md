@@ -56,7 +56,7 @@
 
 ## Sprint ↔ task mapping
 
-See `.ai/planning/sprints.md` for sprint schedule and `.ai/planning/tasks.md` for atomic tasks.
+See `.factory/planning/sprints.md` for sprint schedule and `.factory/planning/tasks.md` for atomic tasks.
 
 ---
 

@@ -1,6 +1,6 @@
 # /to-prd
 
-Write `.ai/context/PRD.md` and `TECHSPEC.md` from aligned understanding.
+Write `.factory/context/PRD.md` and `TECHSPEC.md` from aligned understanding.
 
 ## Usage
 
@@ -11,7 +11,7 @@ Write `.ai/context/PRD.md` and `TECHSPEC.md` from aligned understanding.
 ## Prerequisites
 
 - `/align` done, or explicit brief in conversation
-- `.ai/` scaffolded (`install.sh`)
+- `.factory/` scaffolded (`install.sh`)
 
 ## Loads
 
@@ -19,9 +19,9 @@ Write `.ai/context/PRD.md` and `TECHSPEC.md` from aligned understanding.
 
 ## Outputs
 
-- `.ai/context/PRD.md`
-- `.ai/context/TECHSPEC.md`
-- `.ai/context/STACK.md`
+- `.factory/context/PRD.md`
+- `.factory/context/TECHSPEC.md`
+- `.factory/context/STACK.md`
 - ADR updates as needed
 
 ## Next

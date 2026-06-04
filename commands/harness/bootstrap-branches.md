@@ -25,7 +25,7 @@ Create `dev` and `staging` branches from `main` if missing — required before f
    git push -u origin staging
    ```
 4. Return to previous branch
-5. Document in `.ai/logs/diary.md` (optional one-liner)
+5. Document in `.factory/logs/diary.md` (optional one-liner)
 
 ## Safety
 

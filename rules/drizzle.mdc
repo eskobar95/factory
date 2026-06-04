@@ -15,7 +15,7 @@ alwaysApply: false
 
 - Name migrations: `[timestamp]-[description]` (e.g. `20260603120000-add-users-table`).
 - One logical change per migration when possible.
-- Migrations must be reversible or documented in `.ai/logs/decisions.md` if not.
+- Migrations must be reversible or documented in `.factory/logs/decisions.md` if not.
 
 ## Queries
 

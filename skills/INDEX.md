@@ -8,9 +8,10 @@ Quick reference for all skills. Use this when you need to find the right skill t
 
 | Skill | Command | When |
 |-------|---------|------|
-| `planning/align` | `/align` | Align on idea, update `CONTEXT.md` + ADRs. Run before writing PRD. |
-| `planning/to-prd` | `/to-prd` | Write `PRD.md` + `TECHSPEC.md` from aligned understanding. |
+| `planning/align` | `/align` | Align on idea, update `CONTEXT.md` + ADRs (with enforcement). Run before writing PRD. |
+| `planning/to-prd` | `/to-prd` | Write `PRD.md` + `TECHSPEC.md` with user journeys from aligned understanding. |
 | `planning/to-backlog` | `/to-backlog` | Break PRD into milestones, sprints, vertical-slice tasks with AFK/HITL. |
+| `planning/adr-lookup` | (on ADR/lint failure) | Read ADR scope, enforcement, how to fix — iterate on hook/CI rejection. |
 
 **Fast path:** `/to-plan` runs all three in one session (good for small scope).
 
@@ -22,7 +23,7 @@ Quick reference for all skills. Use this when you need to find the right skill t
 |-------|------|------|
 | `harness/harness` | Lead agent | Preflight, builds dep graph, dispatches parallel Task subagents per group. |
 | `harness/implement` | Subagent | Checkout branch, implement task within scope, commit. |
-| `harness/verify` | Subagent | Run `pnpm typecheck` / `lint` / `test --run`. Structured pass/fail. |
+| `harness/verify` | Subagent | Run focused tests then typecheck / lint / `test --run`. Structured pass/fail. |
 | `harness/review` | Subagent | **Phase 1:** task fit, security. **Phase 2:** thermo-nuclear maintainability. |
 | `harness/thermo-nuclear-code-quality-review` | Invoked by review | Code-judo, 1k-line rule, spaghetti check. |
 | `harness/close` | Subagent | Self-review diff, open PR to `dev`, update `tasks.md`, unblock next group. |
@@ -50,7 +51,7 @@ Quick reference for all skills. Use this when you need to find the right skill t
 
 | Skill | Command | When |
 |-------|---------|------|
-| `productivity/handoff` | `/handoff [focus]` | Compact session → temp file. Reference `.ai/` paths, do not duplicate. |
+| `productivity/handoff` | `/handoff [focus]` | Compact session → temp file. Reference `.factory/` paths, do not duplicate. |
 
 ---
 
@@ -76,6 +77,7 @@ Quick reference for all skills. Use this when you need to find the right skill t
 | `git.mdc` | Always | No direct commits to protected branches, PR description required |
 | `testing.mdc` | Test files | Vitest `--run`, what to test, co-location |
 | `security.mdc` | Always | Secrets, webhooks, SSRF, authz |
+| `architecture.mdc` | Always | ADR lookup on architecture failures; prevention over detection |
 
 ---
 
@@ -83,7 +85,7 @@ Quick reference for all skills. Use this when you need to find the right skill t
 
 See [`skills/catalog/README.md`](catalog/README.md) for third-party skills (Matt Pocock, project overrides).
 
-Project-specific skills live in `.ai/skills/` → symlinked to `.cursor/skills/project/`.
+Project-specific skills live in `.factory/skills/` → symlinked to `.cursor/skills/project/`.
 
 ---
 
@@ -94,6 +96,7 @@ Project-specific skills live in `.ai/skills/` → symlinked to `.cursor/skills/p
 | Understand my idea before building | `/align` |
 | Write product + tech spec | `/to-prd` |
 | Break work into tasks | `/to-backlog` |
+| ADR mentioned in lint/hook error | Load `planning/adr-lookup` |
 | Run a sprint | `/run-sprint S001` |
 | Run one task | `/run-task T003` |
 | Approve HITL task | `/hitl-checkpoint T005` |

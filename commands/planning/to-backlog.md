@@ -10,7 +10,7 @@ Break PRD into milestones, sprints, and **vertical-slice** tasks (`tasks.md`).
 
 ## Prerequisites
 
-- `.ai/context/PRD.md` and `TECHSPEC.md` exist
+- `.factory/context/PRD.md` and `TECHSPEC.md` exist
 - Prefer `/align` + `/to-prd` first for new work
 
 ## Loads
@@ -19,9 +19,9 @@ Break PRD into milestones, sprints, and **vertical-slice** tasks (`tasks.md`).
 
 ## Outputs
 
-- `.ai/planning/milestones.md`
-- `.ai/planning/sprints.md`
-- `.ai/planning/tasks.md` (with **Mode:** AFK | HITL per task)
+- `.factory/planning/milestones.md`
+- `.factory/planning/sprints.md`
+- `.factory/planning/tasks.md` (with **Mode:** AFK | HITL per task)
 
 ## Approval
 

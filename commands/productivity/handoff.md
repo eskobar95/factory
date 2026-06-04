@@ -1,6 +1,6 @@
 # /handoff [focus]
 
-Compact this session for a **fresh agent**. Saves to OS temp — references `.ai/` files, does not duplicate them.
+Compact this session for a **fresh agent**. Saves to OS temp — references `.factory/` files, does not duplicate them.
 
 ## Usage
 

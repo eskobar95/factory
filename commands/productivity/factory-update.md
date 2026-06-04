@@ -10,7 +10,7 @@ Update the factory submodule in the current project and refresh all symlinks.
 
 ## What it does
 
-1. `git submodule update --remote --merge .factory` — pulls latest factory
+1. `git submodule update --remote --merge .factory/kit` — pulls latest factory kit
 2. Re-chmodds any new hook scripts
 3. Verifies / re-creates broken symlinks (rules, commands, hooks, skills)
 4. Migrates plain `hooks.json` copy → symlink if needed
@@ -25,9 +25,9 @@ Update the factory submodule in the current project and refresh all symlinks.
 ## Run directly
 
 ```bash
-.factory/update.sh
+./.factory/kit/update.sh
 ```
 
 ## Do not
 
-- Skip the `git add .factory && git commit` step — without it the project's submodule pointer still points to the old version
+- Skip the `git add .factory/kit && git commit` step — without it the project's submodule pointer still points to the old version

@@ -10,9 +10,9 @@ You are the **lead agent** for a sprint. You **orchestrate only** — you do not
 ## Inputs
 
 - Sprint ID (e.g. `S001`) from `/run-sprint` or user
-- `.ai/planning/tasks.md`
-- `.ai/context/TECHSPEC.md`
-- `.ai/planning/sprints.md`
+- `.factory/planning/tasks.md`
+- `.factory/context/TECHSPEC.md`
+- `.factory/planning/sprints.md`
 
 ## Preflight (before any dispatch)
 
@@ -65,7 +65,7 @@ For each parallel group with **N** runnable AFK tasks:
 ```text
 You are a Factory task worker for [Txxx] sprint [Sxxx].
 
-Read .ai/planning/tasks.md section ## Txxx and .ai/context/TECHSPEC.md.
+Read .factory/planning/tasks.md section ## Txxx and .factory/context/TECHSPEC.md.
 Follow .cursor/rules and factory skills under skills/harness/.
 
 Branch: [exact Branch from task metadata].
@@ -104,7 +104,7 @@ Process results **in task ID order** for consistency:
 
 1. Parse YAML from subagent output
 2. **If YAML missing or malformed:** treat as `status: error`, set task `blocked`, run log-task with `error_reason`, continue other tasks
-3. Update `.ai/planning/tasks.md` (status, PR, blocker) — `done` only if `status: done` AND `ci: pass` or `ci: local-only`
+3. Update `.factory/planning/tasks.md` (status, PR, blocker) — `done` only if `status: done` AND `ci: pass` or `ci: local-only`
 4. **Required:** run `skills/harness/log-task/SKILL.md` with parsed fields
 5. Optional: `log-task` with `started` when setting `in-progress` before dispatch
 6. Re-evaluate **Blocked by** for downstream tasks

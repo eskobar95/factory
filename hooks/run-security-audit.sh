@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Factory hook: run security audit when package.json or lockfile changes.
-# Logs findings to .ai/logs/diary.md. Does not block by default.
+# Logs findings to .factory/logs/diary.md. Does not block by default.
 
 set -euo pipefail
 
@@ -18,7 +18,7 @@ case "${FILE_PATH}" in
   *) exit 0 ;;
 esac
 
-DIARY=".ai/logs/diary.md"
+DIARY=".factory/logs/diary.md"
 TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 
 # Run pnpm audit if available, fall back to npm — capture output regardless of exit code

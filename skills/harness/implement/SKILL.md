@@ -5,12 +5,12 @@ description: Implement a single atomic task — branch, code within scope, follo
 
 # Implement skill
 
-Implement **one** task from `.ai/planning/tasks.md`. Do not run verify/review/close in the same turn unless harness asked for full pipeline.
+Implement **one** task from `.factory/planning/tasks.md`. Do not run verify/review/close in the same turn unless harness asked for full pipeline.
 
 ## Before coding
 
 1. Read the full task section (`## T[id]`)
-2. Read `.ai/context/TECHSPEC.md`, `.ai/context/PRD.md`, and `.ai/context/CONTEXT.md` (glossary — use correct domain terms)
+2. Read `.factory/context/TECHSPEC.md`, `.factory/context/PRD.md`, and `.factory/context/CONTEXT.md` (glossary — use correct domain terms)
 3. Read **Context for implementing agent** and explore cited files
 4. Confirm base branch exists: `dev` (if missing, user runs `/bootstrap-branches`)
 

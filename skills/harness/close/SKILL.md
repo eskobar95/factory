@@ -64,7 +64,7 @@ If repo has no GitHub Actions, fix-ci runs local verify as fallback and notes `c
 
 ## Update tasks.md
 
-In `.ai/planning/tasks.md` for this task:
+In `.factory/planning/tasks.md` for this task:
 
 - Set `**Status:** done` only when **CI green** (or local-only pass)
 - Optional: add `**PR:** #123` under metadata
@@ -94,4 +94,4 @@ Include in harness YAML: `pr_url`, `unblocked_tasks`, `review_phase1`, `review_p
 - Merge the PR (human or CI policy may auto-merge to dev per project setup)
 - Merge to `staging` or `main`
 - Delete branch until after merge (project git rules)
-- Append `.ai/logs/diary.md` (lead `log-task` skill does this)
+- Append `.factory/logs/diary.md` (lead `log-task` skill does this)

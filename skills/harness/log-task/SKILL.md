@@ -1,6 +1,6 @@
 ---
 name: log-task
-description: Append a per-task entry to .ai/logs/diary.md when a harness task finishes, blocks, or is skipped
+description: Append a per-task entry to .factory/logs/diary.md when a harness task finishes, blocks, or is skipped
 ---
 
 # Log-task skill
@@ -40,7 +40,7 @@ error_reason: optional (status error)
 
 ## Procedure
 
-1. Ensure `.ai/logs/diary.md` exists (create `# Dev diary` if missing)
+1. Ensure `.factory/logs/diary.md` exists (create `# Dev diary` if missing)
 2. **Append** only — never overwrite prior entries
 3. Use ISO date `YYYY-MM-DD` and optional UTC time
 
@@ -134,7 +134,7 @@ error_reason: optional (status error)
 
 ```markdown
 ## Log-task — T[id]
-**Diary:** appended to .ai/logs/diary.md
+**Diary:** appended to .factory/logs/diary.md
 ```
 
 ## Do not

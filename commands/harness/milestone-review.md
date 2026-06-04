@@ -10,7 +10,7 @@ Verify milestone completion, run CI gates, and prepare `dev → staging` PR for 
 
 ## Prerequisites
 
-- `.ai/planning/milestones.md` defines the milestone
+- `.factory/planning/milestones.md` defines the milestone
 - Cursor 3.5+ for Background Agent milestone CI
 - `dev` branch up to date with completed sprint work
 
@@ -18,10 +18,10 @@ Verify milestone completion, run CI gates, and prepare `dev → staging` PR for 
 
 ### 1. Verify sprints
 
-1. Read `.ai/planning/milestones.md` for milestone `M[id]`
+1. Read `.factory/planning/milestones.md` for milestone `M[id]`
 2. List sprints belonging to this milestone from milestones + `sprints.md`
-3. Confirm each sprint **Status** is `done` in `.ai/planning/sprints.md`
-4. Confirm all tasks with **Milestone:** M[id] are `done` in `.ai/planning/tasks.md` (or list exceptions)
+3. Confirm each sprint **Status** is `done` in `.factory/planning/sprints.md`
+4. Confirm all tasks with **Milestone:** M[id] are `done` in `.factory/planning/tasks.md` (or list exceptions)
 
 If not complete, report gaps and stop unless user forces partial review.
 
@@ -70,8 +70,8 @@ If `staging` does not exist, instruct user to create it from `main` first.
 
 ### 5. Update planning
 
-- In `.ai/planning/milestones.md`, set milestone status to `in-review` or `ready-for-review` in overview table
-- Optional diary entry in `.ai/logs/diary.md`
+- In `.factory/planning/milestones.md`, set milestone status to `in-review` or `ready-for-review` in overview table
+- Optional diary entry in `.factory/logs/diary.md`
 
 ## Composer output (required)
 

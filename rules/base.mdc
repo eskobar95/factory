@@ -28,7 +28,7 @@ alwaysApply: true
 ## Scope discipline
 
 - Implement only what the active task defines; no drive-by refactors.
-- Read `.ai/context/TECHSPEC.md` and task acceptance criteria before coding.
+- Read `.factory/context/TECHSPEC.md` and task acceptance criteria before coding.
 
 ## Quality gates (per task)
 

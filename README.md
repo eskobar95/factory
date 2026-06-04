@@ -1,12 +1,21 @@
 # Factory — Personal AI Dev OS
 
-Private GitHub repo (`eskobar/factory`) — Cursor commands, skills, rules, and hooks for solo multi-project development.
+Private GitHub repo (`eskobar-dev/factory`) — Cursor commands, skills, rules, and hooks for solo multi-project development.
+
+## What is Factory?
+
+Factory is a **kit** you install into each project via git submodule. It gives you:
+
+- **Planning commands** — align, PRD, backlog before code
+- **Harness commands** — parallel subagent sprint execution with CI gates
+- **Skills** — structured agent behavior for each step
+- **Rules & hooks** — always-on guardrails (typecheck, secrets, branch protection)
+
+Project-specific data (PRD, tasks, diary) lives in **`.factory/`** in each project. The kit itself lives in **`.factory/kit/`**.
 
 ## Two tracks
 
 ### Planning track (before code)
-
-Align and spec **before** the harness runs.
 
 | Command | Skill | Output |
 |---------|-------|--------|
@@ -16,7 +25,7 @@ Align and spec **before** the harness runs.
 | `/to-plan` | all three (fast path) | same as full pipeline |
 | `/handoff` | `productivity/handoff` | temp session summary |
 
-Inspired by [Matt Pocock's skills](https://www.aihero.dev/skills.md): `grill-with-docs` → `to-prd` → `to-issues`. Factory uses `.ai/` + `tasks.md` instead of GitHub issues.
+Inspired by [Matt Pocock's skills](https://www.aihero.dev/skills.md) and [decision-capture patterns](docs/INSPIRATION.md). Factory uses `.factory/` workspace + `tasks.md` instead of GitHub issues.
 
 **Deprecated:** `/po-breakdown` → `/to-plan`
 
@@ -24,57 +33,71 @@ Inspired by [Matt Pocock's skills](https://www.aihero.dev/skills.md): `grill-wit
 
 | Command | Skill | Output |
 |---------|-------|--------|
-| `/run-sprint S001` | `harness/harness` + implement/verify/review/close | PRs to `dev` |
+| `/bootstrap-branches` | — | `dev` + `staging` branches |
+| `/run-sprint S001` | `harness/harness` + pipeline | PRs to `dev` |
+| `/run-task T00x` | same pipeline | single task |
+| `/hitl-checkpoint T00x` | `harness/hitl-checkpoint` | human approval gate |
+| `/milestone-review M001` | `harness/milestone-ci` | `dev → staging` PR |
 
 Review runs **two phases**: task fit + **thermo-nuclear** maintainability.
 
-Task pipeline: `implement → verify → review → close → **fix-ci**` (PR must be green before `done`).
-
-`/run-sprint` dispatches parallel Task subagents; `/run-task T00x` for single tasks; `/bootstrap-branches` before first sprint.
-| `/milestone-review M001` | `harness/milestone-ci` | `dev → staging` PR |
+Task pipeline: `implement → verify → review → close → fix-ci` (PR must be green before `done`).
 
 Tasks use **vertical slices**, **parallel groups** (A, B, C…), and **Mode: AFK | HITL**.
 
-## Repo layout
+## Repo layout (this kit)
 
 ```
-factory/
+factory/                    ← you are here (eskobar-dev/factory)
   commands/
-    planning/       align, to-prd, to-backlog, to-plan
-    harness/        run-sprint, milestone-review
-    productivity/   handoff
+    planning/               align, to-prd, to-backlog, to-plan
+    harness/                run-sprint, run-task, milestone-review, …
+    productivity/           handoff, factory-update
   skills/
-    harness/        implement, verify, review, close, retro, milestone-ci
-    planning/       align, to-prd, to-backlog
-    productivity/   handoff
-    catalog/        README for third-party skills
-  rules/
-  hooks/
-  templates/
+    harness/                implement, verify, review, close, …
+    planning/               align, to-prd, to-backlog
+    productivity/           handoff
+    catalog/                third-party skill pointers
+  rules/                    base, nextjs, drizzle, git, testing, security, architecture
+  hooks/                    typecheck, audit, guards
+  templates/                scaffold files for project workspace
+  docs/                     INSTALL, ARCHITECTURE, MIGRATION
   install.sh
+  update.sh
 ```
+
+See also: [commands/README.md](commands/README.md) · [skills/README.md](skills/README.md) · [rules/README.md](rules/README.md) · [hooks/README.md](hooks/README.md) · [templates/README.md](templates/README.md)
 
 ## Install / update
 
 ```bash
-# First install in a project
-git submodule add git@github.com:eskobar/factory.git .factory
-./.factory/install.sh
+# From your project root (first time)
+git submodule add git@github.com:eskobar-dev/factory.git .factory/kit
+./.factory/kit/install.sh
 
-# Update factory in an existing project
-.factory/update.sh
-git add .factory && git commit -m "chore: update factory"
+# Update kit in an existing project
+./.factory/kit/update.sh
+git add .factory/kit && git commit -m "chore: update factory kit"
 ```
 
+Or use `/factory-update` in Cursor.
+
+Full guide: [docs/INSTALL.md](docs/INSTALL.md)
+
+## Project layout (after install)
+
 ```
-[project]/
+your-project/
   .factory/
-  .ai/
-    context/     PRD, TECHSPEC, CONTEXT, ADR/
-    planning/    milestones, sprints, tasks
-    logs/
-    skills/      project-specific overrides
-  .cursor/       symlinks → .factory/*
+    kit/           ← submodule (eskobar-dev/factory — do not edit)
+    context/       PRD, TECHSPEC, CONTEXT, ADR/, STACK
+    planning/      milestones.md, sprints.md, tasks.md
+    specs/         BDD .feature files (optional)
+    logs/          diary.md, decisions.md
+    skills/        project-specific skill overrides
+    README.md      workspace guide (from template)
+  .cursor/         symlinks → .factory/kit (rules, skills, commands, hooks)
+  src/             your app
 ```
 
 ## End-to-end workflow
@@ -100,7 +123,7 @@ See [`skills/INDEX.md`](skills/INDEX.md) for a full quick-reference of every ski
 
 ## Additional skills
 
-- **Project:** `.ai/skills/` → `.cursor/skills/project/`
+- **Project:** `.factory/skills/` → `.cursor/skills/project/`
 - **Vendor:** `npx skills add mattpocock/skills` — see [skills/catalog/README.md](skills/catalog/README.md)
 
 ## Branch model

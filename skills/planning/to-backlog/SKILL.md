@@ -5,20 +5,20 @@ description: Break PRD into milestones, sprints, and vertical-slice tasks with A
 
 # To-backlog skill
 
-Convert an existing PRD/TECHSPEC into **milestones, sprints, and atomic tasks** in `.ai/planning/`.
+Convert an existing PRD/TECHSPEC into **milestones, sprints, and atomic tasks** in `.factory/planning/`.
 
 ## Prerequisites
 
-- `.ai/context/PRD.md` and `TECHSPEC.md` populated (`/to-prd` or equivalent)
+- `.factory/context/PRD.md` and `TECHSPEC.md` populated (`/to-prd` or equivalent)
 - User approves breakdown granularity before final write (propose first, then write)
 
 ## Outputs
 
 | File | Content |
 |------|---------|
-| `.ai/planning/milestones.md` | M001+, dependencies, sprint mapping |
-| `.ai/planning/sprints.md` | S001+ table |
-| `.ai/planning/tasks.md` | T001+ per `templates/tasks.md` |
+| `.factory/planning/milestones.md` | M001+, dependencies, sprint mapping |
+| `.factory/planning/sprints.md` | S001+ table |
+| `.factory/planning/tasks.md` | T001+ per `templates/tasks.md` |
 
 ## Vertical slices (required)
 
@@ -49,11 +49,12 @@ Prefer AFK when possible. HITL tasks must say **HITL reason** in context section
 
 ## Procedure
 
-1. Read PRD, TECHSPEC, CONTEXT.md
-2. Propose milestone + task breakdown in Composer (table: ID, title, mode, group)
-3. **Wait for user approval** on granularity and dependencies
-4. Write milestones.md, sprints.md, tasks.md
-5. Summarize parallel groups for first sprint
+1. Read PRD (especially **User journeys** J001…), TECHSPEC, CONTEXT.md, ADRs
+2. Map each task to a **PRD journey** id; note **BDD scenarios** when `.factory/specs/` files exist or should be created
+3. Propose milestone + task breakdown in Composer (table: ID, title, journey, mode, group)
+4. **Wait for user approval** on granularity and dependencies
+5. Write milestones.md, sprints.md, tasks.md — include `PRD journey`, `BDD scenarios`, `ADRs` fields per task template
+6. Summarize parallel groups for first sprint
 
 ## Output to user
 

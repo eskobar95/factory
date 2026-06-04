@@ -20,15 +20,32 @@ Run project quality scripts and return a **structured** result for harness. Fix 
 
 > **`--run` is mandatory in agent/subagent context.** Without it Vitest starts in watch mode and the subagent hangs indefinitely.
 
-Read `.ai/context/TECHSPEC.md` **Commands** table for project-specific commands.
+Read `.factory/context/TECHSPEC.md` **Commands** table for project-specific commands.
 
 ## Procedure
 
 1. `git status` — ensure on correct task branch
-2. Run typecheck → capture stdout/stderr
-3. Run lint → capture output
-4. Run tests → capture output
-5. If task specifies narrow test path (e.g. one file), run narrowest command first, then full suite if harness requires
+2. Read task block in `.factory/planning/tasks.md` — note **PRD journey**, **BDD scenarios**, **ADRs**
+3. Run typecheck → capture stdout/stderr
+4. Run lint → capture output
+5. Run tests (see **Focused test strategy** below) → capture output
+
+## Focused test strategy
+
+Prefer narrowest relevant suite before full run — saves context and matches changed files:
+
+1. If task specifies **BDD scenarios** → run those first (path from TECHSPEC **Testing → BDD**)
+2. Else if task lists test files in **Layers in scope → Tests** → run those paths only
+3. Else if `git diff --name-only origin/dev...HEAD` shows changed files → map to co-located tests (`*.test.ts`, `*.spec.ts`)
+4. If focused pass → run full `pnpm test --run` only when TECHSPEC or harness requires it
+5. On architecture/lint failure mentioning **ADR-NNN** → load `skills/planning/adr-lookup/SKILL.md` before retry
+
+Example focused commands:
+
+```bash
+pnpm exec vitest run src/features/checkout/checkout.test.ts
+pnpm exec cucumber-js .factory/specs/J001-checkout.feature
+```
 
 ## Pass/fail rules
 

@@ -10,8 +10,8 @@ Run at **end of sprint** (after harness or `/run-sprint` completes).
 ## Inputs
 
 - Sprint ID (e.g. `S001`)
-- `.ai/planning/tasks.md` — final statuses for sprint tasks
-- `.ai/planning/sprints.md`
+- `.factory/planning/tasks.md` — final statuses for sprint tasks
+- `.factory/planning/sprints.md`
 - Memory of revision loops, blocked tasks, verify/review failures
 
 ## Per-task diary (already written)
@@ -22,7 +22,7 @@ Retro **summarizes** those entries — do not re-paste full task logs.
 
 ## Diary entry (sprint retro)
 
-Append to `.ai/logs/diary.md` (never overwrite prior entries):
+Append to `.factory/logs/diary.md` (never overwrite prior entries):
 
 ```markdown
 ---
@@ -68,12 +68,12 @@ Append to `.ai/logs/diary.md` (never overwrite prior entries):
 
 ## Self-improve loop (v1)
 
-- Suggestions are **documentation only** — do not auto-open PRs to `eskobar/factory` unless user asks (v2 question in PRD)
+- Suggestions are **documentation only** — do not auto-open PRs to `eskobar-dev/factory` unless user asks (v2 question in PRD)
 - If user approves, they can copy suggestions into factory repo manually
 
 ## Optional: decisions log
 
-For significant technical choices made during sprint, append short entries to `.ai/logs/decisions.md`:
+For significant technical choices made during sprint, append short entries to `.factory/logs/decisions.md`:
 
 ```markdown
 ## [date] — [title]
@@ -86,6 +86,6 @@ For significant technical choices made during sprint, append short entries to `.
 ```markdown
 ## Retro complete — S[id]
 
-Diary updated: `.ai/logs/diary.md`
+Diary updated: `.factory/logs/diary.md`
 Factory suggestions: [count] (see diary)
 ```

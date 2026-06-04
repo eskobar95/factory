@@ -9,7 +9,7 @@ Code review for **one task** after verify passes. Two phases; **both** must pass
 
 ## Inputs
 
-- Task section in `.ai/planning/tasks.md`
+- Task section in `.factory/planning/tasks.md`
 - Git diff: `git diff dev...HEAD` (or merge-base with `dev`)
 - Changed files list + line counts for touched files (check 1k boundary)
 

@@ -8,4 +8,4 @@
 
 ---
 
-<!-- Add sprints below. Link tasks in .ai/planning/tasks.md -->
+<!-- Add sprints below. Link tasks in .factory/planning/tasks.md -->
