@@ -120,14 +120,16 @@ link_dir "rules"
 link_dir "commands"
 link_dir "hooks"
 
-# hooks.json at project root (Cursor reads .cursor/hooks.json)
+# hooks.json — symlink so factory updates propagate automatically on git pull
+# If a plain file exists from a previous install, offer migration note.
+if [[ -f .cursor/hooks.json && ! -L .cursor/hooks.json ]]; then
+  echo "    Note: .cursor/hooks.json is a plain file from a previous install."
+  echo "    Replacing with symlink so future factory updates auto-propagate."
+  rm -f .cursor/hooks.json
+fi
 if [[ -f "${FACTORY_SOURCE}/hooks/hooks.json" ]]; then
-  if [[ ! -f .cursor/hooks.json ]] || [[ "${FORCE_HOOKS:-}" == "1" ]]; then
-    cp "${FACTORY_SOURCE}/hooks/hooks.json" .cursor/hooks.json
-    echo "    .cursor/hooks.json installed from factory"
-  else
-    echo "    kept existing .cursor/hooks.json (set FORCE_HOOKS=1 to overwrite)"
-  fi
+  ln -sf "../${FACTORY_PATH}/hooks/hooks.json" .cursor/hooks.json
+  echo "    .cursor/hooks.json -> ../${FACTORY_PATH}/hooks/hooks.json (symlink)"
 fi
 for script in run-typecheck.sh run-security-audit.sh run-stop-checks.sh guard-branches.sh; do
   if [[ -f "${FACTORY_SOURCE}/hooks/${script}" ]]; then
@@ -150,6 +152,7 @@ GITIGNORE_ENTRIES=(
   ".cursor/skills/"
   ".cursor/commands/"
   ".cursor/hooks/"
+  ".cursor/hooks.json"
 )
 
 append_gitignore() {

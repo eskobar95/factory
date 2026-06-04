@@ -52,11 +52,16 @@ factory/
   install.sh
 ```
 
-## Install in a project
+## Install / update
 
 ```bash
+# First install in a project
 git submodule add git@github.com:eskobar/factory.git .factory
 ./.factory/install.sh
+
+# Update factory in an existing project
+.factory/update.sh
+git add .factory && git commit -m "chore: update factory"
 ```
 
 ```
@@ -86,6 +91,10 @@ flowchart LR
 Or: `idea → /to-plan → /run-sprint → /milestone-review`
 
 You only approve **`staging → main`** and milestone PRs to staging.
+
+## Skill index
+
+See [`skills/INDEX.md`](skills/INDEX.md) for a full quick-reference of every skill, hook, and rule.
 
 ## Additional skills
 
