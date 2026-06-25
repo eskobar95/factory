@@ -102,31 +102,52 @@ fi
 
 echo ""
 
-# ── 3. ultimate-pi ────────────────────────────────────────────────────────────
-log "ultimate-pi (governed execution harness)"
+# ── 3. Pi + ultimate-pi ───────────────────────────────────────────────────────
+log "Pi + ultimate-pi (governed execution harness)"
+
+echo ""
+echo "    Pi is a separate agent environment (like Cursor) that must be installed"
+echo "    manually from https://pi.dev before ultimate-pi can be used."
+echo ""
 
 if command -v pi &>/dev/null; then
-  ok "pi already installed"
+  ok "pi CLI found ($(pi --version 2>/dev/null || echo 'version unknown'))"
+  PI_INSTALLED=true
 else
+  PI_INSTALLED=false
+  echo "    ✗ pi not found in PATH"
   echo ""
-  echo "    Pi is not installed. Install it from https://pi.dev"
-  echo "    (Pi requires a separate account/license)"
+  echo "    ─────────────────────────────────────────────────────────"
+  echo "    Install Pi first:"
+  echo "      1. Go to https://pi.dev and create an account"
+  echo "      2. Follow the installation instructions for your platform"
+  echo "      3. Verify: pi --version"
+  echo "      4. Re-run this script"
+  echo "    ─────────────────────────────────────────────────────────"
   echo ""
 fi
 
-if command -v pi &>/dev/null; then
-  if [[ ! -d ".pi" ]]; then
-    echo "    Bootstrapping ultimate-pi harness..."
-    npx ultimate-pi@latest /harness-setup --non-interactive --skip-graphify 2>/dev/null || \
-      echo "    Note: run 'pi \"/harness-setup\"' manually in a Pi session to complete harness setup"
-    ok "ultimate-pi bootstrapped → .pi/"
-  else
-    ok ".pi/ already exists"
-  fi
+if [[ "${PI_INSTALLED}" == "true" ]]; then
+  # ultimate-pi is a harness extension that runs inside Pi sessions.
+  # It is installed per-project via npx — not globally.
+  echo "    ultimate-pi installs as a per-project harness extension."
+  echo "    It is bootstrapped the first time you run /harness-setup inside Pi."
+  echo ""
 
-  # Update factory.config.yaml
-  if [[ -f "${CONFIG_FILE}" ]]; then
-    python3 -c "
+  if [[ ! -d ".pi" ]]; then
+    echo "    To bootstrap ultimate-pi for this project:"
+    echo ""
+    echo "      cd ${PROJECT_ROOT}"
+    echo "      pi                          # open a Pi session in this directory"
+    echo "      /harness-setup              # inside Pi: installs ultimate-pi harness"
+    echo ""
+    echo "    /harness-setup is idempotent — safe to re-run."
+  else
+    ok ".pi/ exists — ultimate-pi harness already bootstrapped"
+
+    # Update factory.config.yaml
+    if [[ -f "${CONFIG_FILE}" ]]; then
+      python3 -c "
 import re
 with open('${CONFIG_FILE}') as f:
     content = f.read()
@@ -135,6 +156,7 @@ with open('${CONFIG_FILE}', 'w') as f:
     f.write(content)
 print('    factory.config.yaml: pi.enabled = true')
 " 2>/dev/null || true
+    fi
   fi
 fi
 
@@ -166,8 +188,15 @@ fi
 if command -v sentrux &>/dev/null; then
   echo "  ✓ Sentrux   — edit .sentrux/rules.toml, then 'sentrux check_rules'"
 fi
-if command -v pi &>/dev/null; then
-  echo "  ✓ Pi        — use Engine: pi on tasks, start with 'pi \"/harness-plan\"'"
+if [[ "${PI_INSTALLED}" == "true" ]]; then
+  if [[ -d ".pi" ]]; then
+    echo "  ✓ Pi        — .pi/ harness ready. Use Engine: pi on tasks."
+  else
+    echo "  ⚠ Pi        — installed, but harness not yet set up."
+    echo "                Run: pi → /harness-setup"
+  fi
+else
+  echo "  ✗ Pi        — not installed. See https://pi.dev"
 fi
 
 echo ""
