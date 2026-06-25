@@ -56,19 +56,42 @@ Prefer AFK when possible. HITL tasks must say **HITL reason** in context section
 5. Write milestones.md, sprints.md, tasks.md — include `PRD journey`, `BDD scenarios`, `ADRs` fields per task template
 6. Summarize parallel groups for first sprint
 
+## Engine assignment
+
+Every task must have an `**Engine:**` field. Use these guidelines:
+
+| Task characteristics | Engine |
+|---------------------|--------|
+| UI changes, small fixes, < 5 files | `cursor` |
+| Structural refactors, > 5 files, architectural changes | `pi` |
+| HITL tasks (always) | `cursor` |
+| Default when unclear | `cursor` |
+
+Set in tasks.md as `**Engine:** cursor` or `**Engine:** pi`.
+
+## Linear sync (when `linear.enabled: true`)
+
+After writing tasks.md, check `factory.config.yaml linear.enabled`.
+
+If `true`: load and run `skills/productivity/linear-sync/SKILL.md` to create Linear issues for all new tasks.
+
+Each created task gets a `**Linear:** LIN-NNN` field added to its metadata in tasks.md.
+
 ## Output to user
 
 ```markdown
 ## To-backlog complete
 
 - **Milestones:** n | **Sprints:** n | **Tasks:** n
-- **AFK:** n | **HITL:** n
+- **AFK:** n | **HITL:** n | **Engine cursor:** n | **Engine pi:** n
 
 **S001 parallel groups:**
-- A: T001, T002
-- B: T003 (blocked by T001)
+- A: T001 (cursor), T002 (pi)
+- B: T003 (blocked by T001, cursor)
 
-**Next:** Create `dev` branch → `/run-sprint S001`
+**Linear:** N issues created (or: linear.enabled: false — skipped)
+
+**Next:** Create integration branch → `/run-sprint S001`
 ```
 
 ## Do not
@@ -76,3 +99,4 @@ Prefer AFK when possible. HITL tasks must say **HITL reason** in context section
 - Implement code
 - Create tasks without sprint/milestone IDs
 - Skip user approval step on first breakdown for a milestone
+- Assign `Engine: pi` to HITL tasks

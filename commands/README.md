@@ -37,6 +37,7 @@ Each command is a markdown file. Cursor loads it when you type `/command-name`.
 | `/factory-update` | Pull latest kit + re-copy `.cursor/` files |
 | `/capture-rule` | Persist project pattern as `.factory/rules/project-*.mdc` |
 | `/migrate-to-2.0` | Audit + migrate Factory 1.0 project (non-destructive) |
+| `/linear-sync` | Sync tasks.md → Linear (create + close). `tasks.md` is SSOT. |
 
 ## Typical flow
 

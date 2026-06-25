@@ -60,6 +60,7 @@ Quick reference for all skills. Skills live at `.cursor/skills/factory/`.
 | `productivity/handoff` | `/handoff [focus]` | Compact session summary for next chat. |
 | `productivity/capture-rule` | `/capture-rule` | Persist learned project pattern as `.factory/rules/project-*.mdc`. |
 | `productivity/migrate-to-2.0` | `/migrate-to-2.0` | Audit + migrate Factory 1.0 project to 2.0 (non-destructive). |
+| `productivity/linear-sync` | `/linear-sync` | Sync tasks.md → Linear (create issues, close done). tasks.md is SSOT. |
 
 ---
 
@@ -123,5 +124,6 @@ Bootstrap Graphify + Sentrux + Pi: `scripts/bootstrap-pi.sh`
 | Fix PR review comments | `/review-pr [url]` |
 | Capture a project pattern | `/capture-rule` |
 | Migrate from 1.0 | `/migrate-to-2.0` |
+| Sync tasks → Linear | `/linear-sync` |
 | Update factory kit | `/factory-update` |
 | Bootstrap Pi + Graphify | `scripts/bootstrap-pi.sh` |
