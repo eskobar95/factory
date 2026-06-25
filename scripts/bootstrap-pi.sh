@@ -128,24 +128,41 @@ else
 fi
 
 if [[ "${PI_INSTALLED}" == "true" ]]; then
-  # ultimate-pi is a harness extension that runs inside Pi sessions.
-  # It is installed per-project via npx — not globally.
-  echo "    ultimate-pi installs as a per-project harness extension."
-  echo "    It is bootstrapped the first time you run /harness-setup inside Pi."
-  echo ""
+  # Pi uses its own Node.js at ~/.hermes/node/bin/
+  # ultimate-pi must be installed via Pi's own npm, not system npm.
+  PI_NPM="${HOME}/.hermes/node/bin/npm"
+  PI_MODULES="${HOME}/.hermes/node/lib/node_modules"
 
+  if [[ -d "${PI_MODULES}/ultimate-pi" ]]; then
+    UPIVERSION=$(node -e "console.log(require('${PI_MODULES}/ultimate-pi/package.json').version)" 2>/dev/null || echo "unknown")
+    ok "ultimate-pi@${UPIVERSION} already installed"
+  else
+    echo "    Installing ultimate-pi via Pi's npm (~/.hermes/node/bin/npm)..."
+    if [[ -f "${PI_NPM}" ]]; then
+      "${PI_NPM}" install -g ultimate-pi
+      ok "ultimate-pi installed"
+    else
+      echo "    Warning: Pi's npm not found at ${PI_NPM}"
+      echo "    Try manually: export PATH=\"\$HOME/.hermes/node/bin:\$PATH\" && npm install -g ultimate-pi"
+    fi
+  fi
+
+  echo ""
   if [[ ! -d ".pi" ]]; then
-    echo "    To bootstrap ultimate-pi for this project:"
+    echo "    ─────────────────────────────────────────────────────────"
+    echo "    Harness not yet bootstrapped for this project."
+    echo "    Run these commands to finish setup:"
     echo ""
+    echo "      export PATH=\"\$HOME/.hermes/node/bin:\$PATH\""
     echo "      cd ${PROJECT_ROOT}"
-    echo "      pi                          # open a Pi session in this directory"
-    echo "      /harness-setup              # inside Pi: installs ultimate-pi harness"
+    echo "      pi                 # open Pi session (requires /login first if new)"
+    echo "      /harness-setup     # inside Pi: bootstraps .pi/ harness files"
     echo ""
     echo "    /harness-setup is idempotent — safe to re-run."
+    echo "    ─────────────────────────────────────────────────────────"
   else
     ok ".pi/ exists — ultimate-pi harness already bootstrapped"
 
-    # Update factory.config.yaml
     if [[ -f "${CONFIG_FILE}" ]]; then
       python3 -c "
 import re
