@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# update.sh — pull latest factory kit and refresh .cursor/ symlinks
+# Factory 2.0 update — pull latest kit and re-copy .cursor/ files
 # Run from project root: .factory/kit/update.sh
 
 set -euo pipefail
@@ -7,73 +7,105 @@ set -euo pipefail
 PROJECT_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
 cd "${PROJECT_ROOT}"
 
-# Detect kit path (new vs legacy layout)
-if [[ -e ".factory/kit/.git" ]] || [[ -f ".factory/kit/install.sh" ]]; then
-  FACTORY_KIT=".factory/kit"
-elif [[ -e ".factory/.git" ]] && [[ -f ".factory/install.sh" ]]; then
-  FACTORY_KIT=".factory"
-else
+FACTORY_KIT=".factory/kit"
+FACTORY_WS=".factory"
+
+if [[ ! -f "${FACTORY_KIT}/install.sh" ]]; then
   echo "Error: Factory kit not found. Run install.sh first."
   exit 1
 fi
 
-FACTORY_WS=".factory"
-
-echo "==> Factory update (project: ${PROJECT_ROOT})"
+echo "==> Factory 2.0 update (project: ${PROJECT_ROOT})"
 echo "    Kit: ${FACTORY_KIT}"
 
+# ── 1. Pull latest submodule ──────────────────────────────────────────────────
 BEFORE=$(git -C "${FACTORY_KIT}" rev-parse HEAD 2>/dev/null || true)
 git submodule update --init --remote --merge "${FACTORY_KIT}" 2>/dev/null || \
   git submodule update --remote --merge "${FACTORY_KIT}"
 AFTER=$(git -C "${FACTORY_KIT}" rev-parse HEAD 2>/dev/null || true)
 
 if [[ "${BEFORE}" == "${AFTER}" ]]; then
-  echo "    Already up to date (${AFTER:0:8})"
+  echo "    Kit already up to date (${AFTER:0:8})"
 else
-  echo "    Updated: ${BEFORE:0:8} → ${AFTER:0:8}"
+  echo "    Kit updated: ${BEFORE:0:8} → ${AFTER:0:8}"
   git -C "${FACTORY_KIT}" log --oneline "${BEFORE}..${AFTER}" 2>/dev/null | sed 's/^/    /' || true
 fi
 
-echo "==> Refreshing hook permissions..."
-for script in "${FACTORY_KIT}"/hooks/*.sh; do
+# ── 2. Re-copy kit-owned .cursor/ files (overwrite) ──────────────────────────
+echo "==> Re-copying kit files to .cursor/"
+
+mkdir -p .cursor/rules .cursor/commands/planning .cursor/commands/harness \
+         .cursor/commands/productivity .cursor/hooks .cursor/skills/factory
+
+recopy_kit_dir() {
+  local src="${FACTORY_KIT}/$1"
+  local dest=".cursor/$1"
+  if [[ ! -d "${src}" ]]; then
+    echo "    Warning: ${FACTORY_KIT}/$1 missing, skipping"
+    return
+  fi
+  cp -r "${src}/." "${dest}/"
+  echo "    .cursor/$1 updated"
+}
+
+recopy_kit_dir "rules"
+recopy_kit_dir "commands"
+recopy_kit_dir "hooks"
+
+# Kit skills → .cursor/skills/factory/
+cp -r "${FACTORY_KIT}/skills/." ".cursor/skills/factory/"
+echo "    .cursor/skills/factory/ updated"
+
+for script in .cursor/hooks/*.sh; do
   [[ -f "${script}" ]] && chmod +x "${script}"
 done
 
-echo "==> Verifying .cursor/ symlinks..."
-relink() {
-  local name="$1"
-  local link=".cursor/${name}"
-  local target="../${FACTORY_KIT}/${name}"
-  if [[ ! -e "${link}" ]]; then
-    ln -sf "${target}" "${link}"
-    echo "    re-created ${link}"
-  else
-    echo "    ok ${link}"
-  fi
-}
-
-relink "rules"
-relink "commands"
-relink "hooks"
-
-if [[ ! -L ".cursor/hooks.json" ]]; then
-  rm -f .cursor/hooks.json
-  ln -sf "../${FACTORY_KIT}/hooks/hooks.json" .cursor/hooks.json
-  echo "    re-created .cursor/hooks.json"
-else
-  echo "    ok .cursor/hooks.json"
+# ── 3. Re-sync project rules ──────────────────────────────────────────────────
+if [[ -n "$(ls -A "${FACTORY_WS}/rules/" 2>/dev/null)" ]]; then
+  cp "${FACTORY_WS}/rules/"*.mdc .cursor/rules/ 2>/dev/null || true
+  echo "    project rules synced to .cursor/rules/"
 fi
 
-mkdir -p .cursor/skills
-ln -sf "../../${FACTORY_KIT}/skills" .cursor/skills/factory
-if [[ -d "${FACTORY_WS}/skills" ]] && [[ -n "$(ls -A "${FACTORY_WS}/skills" 2>/dev/null || true)" ]]; then
-  ln -sf "../../${FACTORY_WS}/skills" .cursor/skills/project
-fi
-echo "    ok .cursor/skills/factory"
+# ── 4. Run pending migrations ─────────────────────────────────────────────────
+MIGRATIONS_DIR="${FACTORY_KIT}/migrations"
+META_FILE="${PROJECT_ROOT}/.kit-meta.json"
 
+if [[ -d "${MIGRATIONS_DIR}" ]] && [[ -f "${META_FILE}" ]]; then
+  echo "==> Checking migrations"
+  APPLIED=$(python3 -c "import json,sys; d=json.load(open('${META_FILE}')); print(d.get('last_migration','000'))" 2>/dev/null || echo "000")
+
+  for migration in "${MIGRATIONS_DIR}"/*.sh; do
+    [[ -f "${migration}" ]] || continue
+    num=$(basename "${migration}" | cut -d'-' -f1)
+    if [[ "${num}" > "${APPLIED}" ]]; then
+      echo "    applying migration: $(basename ${migration})"
+      bash "${migration}" "${PROJECT_ROOT}" "${FACTORY_KIT}"
+      APPLIED="${num}"
+    fi
+  done
+
+  KIT_SHA=$(git -C "${FACTORY_KIT}" rev-parse HEAD 2>/dev/null || echo "unknown")
+  KIT_VERSION=$(cat "${FACTORY_KIT}/VERSION" 2>/dev/null || echo "2.0")
+  python3 -c "
+import json
+with open('${META_FILE}') as f:
+    d = json.load(f)
+d['kit_sha'] = '${KIT_SHA}'
+d['factory_version'] = '${KIT_VERSION}'
+d['updated_at'] = '$(date -u +%Y-%m-%dT%H:%M:%SZ)'
+d['last_migration'] = '${APPLIED}'
+with open('${META_FILE}', 'w') as f:
+    json.dump(d, f, indent=2)
+print('    .kit-meta.json updated')
+" 2>/dev/null || true
+fi
+
+# ── 5. Done ───────────────────────────────────────────────────────────────────
 echo ""
-echo "Update complete."
+echo "Factory 2.0 update complete."
 if [[ "${BEFORE}" != "${AFTER}" ]]; then
-  echo "  git add ${FACTORY_KIT} && git commit -m 'chore: update factory kit to ${AFTER:0:8}'"
+  echo "  Commit the update:"
+  echo "  git add ${FACTORY_KIT} .cursor/ .kit-meta.json"
+  echo "  git commit -m 'chore: update factory kit to ${AFTER:0:8}'"
 fi
 echo ""

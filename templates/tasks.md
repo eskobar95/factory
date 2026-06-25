@@ -1,8 +1,9 @@
 # Tasks
 
-> Atomic tasks for harness execution. One task = one PR to `dev`.
-> Status values: `todo` | `in-progress` | `blocked` | `done`  
-> Mode values: `AFK` (agent runs alone) | `HITL` (human checkpoint required before/during implement)
+> Atomic tasks for harness execution. One task = one PR.
+> Status: `todo` | `in-progress` | `blocked` | `done`
+> Mode: `AFK` (agent runs alone) | `HITL` (human checkpoint required)
+> Engine: `cursor` (Cursor cloud agent) | `pi` (Pi / ultimate-pi harness)
 
 ---
 
@@ -12,11 +13,11 @@
 **Milestone:** M001
 **Status:** todo
 **Mode:** AFK
+**Engine:** cursor
 **Parallel group:** A
 **Blocked by:** none
 **Branch:** feature/S001/T001-task-slug
-**PRD journey:** J001
-**BDD scenarios:** J001-example-journey.feature — "Happy path through the journey"
+**PRD:** context/features/[feature].md (or context/PRD.md)
 **ADRs:** ADR-001
 
 ### Slice objective
@@ -44,6 +45,7 @@
 
 - [Relevant files, patterns, existing code to follow]
 - For **HITL** tasks: state checkpoint and what human must approve before PR
+- For **Engine: pi** tasks: complexity level, estimated files changed, architectural risk
 
 ### Definition of done
 
@@ -55,4 +57,6 @@
 
 ---
 
-<!-- Add more tasks below using the same format. Task IDs: T001, T002, ... -->
+<!-- Add more tasks below. Task IDs: T001, T002, ... -->
+<!-- Engine: cursor  → dispatched as Cursor Task subagent                      -->
+<!-- Engine: pi      → TaskBrief written to .factory/handoff/T00x.yaml → Pi   -->

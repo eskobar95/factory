@@ -1,6 +1,6 @@
 # /factory-update
 
-Update the factory submodule in the current project and refresh all symlinks.
+Update the factory kit and re-copy `.cursor/` files.
 
 ## Usage
 
@@ -10,17 +10,18 @@ Update the factory submodule in the current project and refresh all symlinks.
 
 ## What it does
 
-1. `git submodule update --remote --merge .factory/kit` — pulls latest factory kit
-2. Re-chmodds any new hook scripts
-3. Verifies / re-creates broken symlinks (rules, commands, hooks, skills)
-4. Migrates plain `hooks.json` copy → symlink if needed
-5. Reports commits pulled and the `git add` command to pin the new pointer
+1. `git submodule update --remote --merge .factory/kit` — pulls latest kit
+2. Re-copies kit files to `.cursor/` (rules, commands, hooks, skills/factory)
+3. Re-syncs `.factory/rules/project-*.mdc` → `.cursor/rules/`
+4. Runs pending migrations from `migrations/`
+5. Updates `.kit-meta.json`
+6. Reports commits pulled and the `git add` command to pin the update
 
 ## When to run
 
 - After factory gets new skills, rules, hooks, or bug fixes
-- After cloning a project that uses factory (to ensure submodule is initialized)
-- If symlinks break after a `git clean` or IDE reset
+- After cloning a project (ensures submodule is initialised + `.cursor/` files copied)
+- When a new project rule has been added to `.factory/rules/`
 
 ## Run directly
 
@@ -28,6 +29,13 @@ Update the factory submodule in the current project and refresh all symlinks.
 ./.factory/kit/update.sh
 ```
 
+## After running
+
+```bash
+git add .factory/kit .cursor/ .kit-meta.json
+git commit -m "chore: update factory kit to [sha]"
+```
+
 ## Do not
 
-- Skip the `git add .factory/kit && git commit` step — without it the project's submodule pointer still points to the old version
+- Skip the commit step — without it the submodule pointer stays on the old version

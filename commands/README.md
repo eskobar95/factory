@@ -1,49 +1,54 @@
-# Commands
+# Commands — Factory 2.0
 
-Cursor slash commands installed via `.cursor/commands` → symlink to `.factory/kit/commands`.
+Cursor slash commands installed to `.cursor/commands/` (real files, tracked in git).
 
 Each command is a markdown file. Cursor loads it when you type `/command-name`.
 
 ## Planning
 
-| Command | File | Description |
-|---------|------|-------------|
-| `/align` | [planning/align.md](planning/align.md) | Align on idea; update CONTEXT + ADRs |
-| `/to-prd` | [planning/to-prd.md](planning/to-prd.md) | Write PRD + TECHSPEC |
-| `/to-backlog` | [planning/to-backlog.md](planning/to-backlog.md) | Milestones, sprints, vertical-slice tasks |
-| `/to-plan` | [planning/to-plan.md](planning/to-plan.md) | All three planning steps (fast path) |
+| Command | Description |
+|---------|-------------|
+| `/align` | Align on idea; update CONTEXT + ADRs |
+| `/to-prd` | Update or create PRD + TECHSPEC (never recreates) |
+| `/to-backlog` | Milestones, sprints, tasks with Engine field |
+| `/to-plan` | All three planning steps (fast path) |
 
 **Outputs:** `.factory/context/`, `.factory/planning/`
 
 ## Harness
 
-| Command | File | Description |
-|---------|------|-------------|
-| `/bootstrap-branches` | [harness/bootstrap-branches.md](harness/bootstrap-branches.md) | Create `dev` + `staging` branches |
-| `/run-sprint` | [harness/run-sprint.md](harness/run-sprint.md) | Execute sprint tasks in parallel groups |
-| `/run-task` | [harness/run-task.md](harness/run-task.md) | Run a single task |
-| `/hitl-checkpoint` | [harness/hitl-checkpoint.md](harness/hitl-checkpoint.md) | Approve HITL task before implement |
-| `/milestone-review` | [harness/milestone-review.md](harness/milestone-review.md) | CI gates + `dev → staging` PR |
+| Command | Description |
+|---------|-------------|
+| `/bootstrap-branches` | Create integration + staging branches |
+| `/run-sprint S001` | Execute sprint — routes tasks to Cursor or Pi by Engine field |
+| `/run-task T003` | Run a single task |
+| `/hitl-checkpoint T005` | Approve HITL task before implement |
+| `/ship T001` | Full quality gate → open PR |
+| `/review-pr [url]` | Fetch PR comments, fix, re-push |
+| `/milestone-review M001` | CI gates + integration → staging PR |
 
-**Reads:** `.factory/planning/tasks.md` · **Writes:** PRs, `tasks.md`, `.factory/logs/diary.md`
+**Engine routing:** tasks with `Engine: cursor` → Cursor Task subagent. `Engine: pi` → TaskBrief written to `.factory/handoff/T[id].yaml`.
 
 ## Productivity
 
-| Command | File | Description |
-|---------|------|-------------|
-| `/handoff` | [productivity/handoff.md](productivity/handoff.md) | Compact session summary for next chat |
-| `/factory-update` | [productivity/factory-update.md](productivity/factory-update.md) | Pull latest kit + refresh symlinks |
-
-## Deprecated
-
-| Command | Replacement |
+| Command | Description |
 |---------|-------------|
-| `/po-breakdown` | [po-breakdown.md](po-breakdown.md) → use `/to-plan` |
+| `/handoff` | Compact session summary |
+| `/factory-update` | Pull latest kit + re-copy `.cursor/` files |
+| `/capture-rule` | Persist project pattern as `.factory/rules/project-*.mdc` |
+| `/migrate-to-2.0` | Audit + migrate Factory 1.0 project (non-destructive) |
 
 ## Typical flow
 
 ```
-/align → /to-prd → /to-backlog → /bootstrap-branches → /run-sprint S001 → /milestone-review M001
+/align → /to-prd → /to-backlog → /bootstrap-branches → /run-sprint S001 → /ship T001 → /milestone-review M001
 ```
 
-Or: `/to-plan` → `/run-sprint S001`
+## Pi flow (when Engine: pi)
+
+```
+/run-sprint S001
+  → writes .factory/handoff/T001.yaml
+  → user runs Pi session in .worktrees/pi-T001
+  → /ship T001   (quality gate in Cursor)
+```
