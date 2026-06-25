@@ -193,6 +193,31 @@ append_gitignore ".sentrux/cache/"
 append_gitignore ".pi/harness/runs/"
 append_gitignore ".worktrees/"
 
+# ── 4b. Pi model setup ───────────────────────────────────────────────────────
+if [[ "${PI_INSTALLED}" == "true" ]]; then
+  log "Pi model configuration"
+  echo ""
+  echo "    Pi supports your existing subscriptions and OpenRouter."
+  echo "    Recommended setup:"
+  echo ""
+  echo "    Option A — Claude Pro/Max subscription (no extra cost):"
+  echo "      pi → /login → select 'Claude Pro/Max'"
+  echo "      (draws from extra usage pool, not plan messages)"
+  echo ""
+  echo "    Option B — OpenRouter (access to 200+ models, pay-per-use):"
+  echo "      export OPENROUTER_API_KEY=sk-or-v1-..."
+  echo "      pi → /login → select 'OpenRouter'"
+  echo "      (supports Claude, GPT-5, Gemini, Grok, Kimi K2, etc.)"
+  echo ""
+  echo "    Option C — Both (Claude primary, OpenRouter for experiments):"
+  echo "      Login to Claude first, set OPENROUTER_API_KEY in .env"
+  echo "      Switch per session: pi --provider openrouter --model anthropic/claude-opus-4"
+  echo ""
+  echo "    NOTE: Cursor's subscription cannot be used as a model API for Pi."
+  echo "    Cursor SDK is for running Cursor agents — not an LLM proxy."
+  echo ""
+fi
+
 # ── 5. Summary ────────────────────────────────────────────────────────────────
 echo ""
 echo "Bootstrap complete."
