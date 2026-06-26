@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "pi-harness": {
+      "command": "node",
+      "args": [".factory/kit/scripts/pi-mcp-server.js"],
+      "env": {
+        "PI_BIN": ""
+      }
+    }
+  }
+}

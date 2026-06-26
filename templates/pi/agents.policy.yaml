@@ -1,0 +1,103 @@
+# Factory 2.0 — ultimate-pi model routing (project-owned)
+# Edit this file in .factory/pi/ — synced to .pi/agents.policy.yaml on bootstrap/update.
+# Format: model: provider/model-id  (same as Pi CLI --provider/--model)
+#
+# Providers:
+#   openrouter/*  — pay-per-use (Hy3, Owl Alpha, Nex-N2-Pro)
+#   cursor/*      — via @offbynan/pi-cursor-provider (/login cursor)
+#
+# Executor tiers (one active — edit harness/running/executor.model):
+#   default → cursor/composer-2.5   agentic coding, subscription-efficient
+#   heavy   → cursor/glm-5.2        complex refactors, deep multi-file work
+
+apiVersion: harness.toolkit/v1
+
+agents:
+  # ── Planning: cheap OpenRouter models ─────────────────────────────────────
+  harness/planning/decompose:
+    model: openrouter/tencent/hy3-preview
+    thinking: low
+
+  harness/planning/plan-synthesizer:
+    model: openrouter/tencent/hy3-preview
+    thinking: medium
+
+  harness/planning/hypothesis:
+    model: openrouter/tencent/hy3-preview
+    thinking: medium
+
+  harness/planning/hypothesis-validator:
+    model: openrouter/tencent/hy3-preview
+    thinking: low
+
+  harness/planning/execution-plan-author:
+    model: openrouter/tencent/hy3-preview
+    thinking: medium
+
+  harness/planning/planning-context:
+    model: openrouter/openrouter/owl-alpha
+    thinking: off
+
+  harness/planning/stack-researcher:
+    model: openrouter/openrouter/owl-alpha
+    thinking: off
+
+  harness/planning/implementation-researcher:
+    model: openrouter/z-ai/glm-5.2
+    thinking: medium
+
+  harness/planning/plan-adversary:
+    model: openrouter/z-ai/glm-5.2
+    thinking: high
+
+  harness/planning/plan-evaluator:
+    model: openrouter/tencent/hy3-preview
+    thinking: medium
+
+  harness/planning/review-integrator:
+    model: openrouter/tencent/hy3-preview
+    thinking: medium
+
+  harness/planning/sprint-contract-auditor:
+    model: openrouter/tencent/hy3-preview
+    thinking: low
+
+  # ── Execution: Cursor subscription ────────────────────────────────────────
+  # Switch to cursor/glm-5.2 for heavy tasks (see models.profile.yaml)
+  harness/running/executor:
+    model: cursor/composer-2.5
+    thinking: high
+
+  # ── Review: different model family than executor ──────────────────────────
+  harness/reviewing/adversary:
+    model: cursor/grok-4.3
+    thinking: high
+
+  harness/reviewing/evaluator:
+    model: cursor/glm-5.2
+    thinking: high
+
+  harness/reviewing/tie-breaker:
+    model: cursor/gpt-5.5
+    thinking: high
+
+  # ── Governance: cheap analysis ───────────────────────────────────────────
+  harness/sentrux-steward:
+    model: openrouter/tencent/hy3-preview
+    thinking: low
+
+  harness/sentrux-repair-advisor:
+    model: openrouter/tencent/hy3-preview
+    thinking: medium
+
+  harness/ls-lint-steward:
+    model: openrouter/tencent/hy3-preview
+    thinking: medium
+
+  harness/trace-librarian:
+    model: openrouter/openrouter/owl-alpha
+    thinking: off
+
+  harness/incident-recorder:
+    model: openrouter/tencent/hy3-preview
+    thinking: medium

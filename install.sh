@@ -8,7 +8,7 @@
 #   .factory/logs/         ← diary, decisions
 #   .factory/skills/       ← project-specific skill overrides
 #   .factory/rules/        ← project-specific Cursor rules (project-*.mdc)
-#   .factory/handoff/      ← Pi TaskBrief YAML files (Engine: pi tasks)
+#   .factory/handoff/      ← Pi task context (TaskBrief artifacts, auto-generated)
 #   .cursor/               ← real files copied from kit (tracked in git)
 #   .kit-meta.json         ← kit version tracking for migrations
 
@@ -99,6 +99,7 @@ WS_DIRS=(
   "${FACTORY_WS}/specs"
   "${FACTORY_WS}/handoff"
   "${FACTORY_WS}/policies"
+  "${FACTORY_WS}/pi"
 )
 
 for dir in "${WS_DIRS[@]}"; do
@@ -116,6 +117,42 @@ copy_if_missing() {
   fi
 }
 
+# Inject pi-harness MCP server into .cursor/mcp.json without overwriting existing servers.
+# Uses node if available (handles JSON merge); falls back to overwrite-if-missing only.
+inject_mcp_server() {
+  local mcp_file=".cursor/mcp.json"
+  local kit_mcp="${KIT_SOURCE}/templates/mcp.json"
+
+  if [[ ! -f "${mcp_file}" ]]; then
+    cp "${kit_mcp}" "${mcp_file}"
+    echo "    created ${mcp_file}"
+    return
+  fi
+
+  # Check if pi-harness already present
+  if grep -q '"pi-harness"' "${mcp_file}" 2>/dev/null; then
+    echo "    ${mcp_file} already has pi-harness — skipped"
+    return
+  fi
+
+  # Try node merge
+  if command -v node >/dev/null 2>&1; then
+    node - "${mcp_file}" "${kit_mcp}" <<'JSEOF'
+const [, , dest, src] = process.argv;
+const fs = require('fs');
+const existing = JSON.parse(fs.readFileSync(dest, 'utf8'));
+const kit = JSON.parse(fs.readFileSync(src, 'utf8'));
+existing.mcpServers = existing.mcpServers || {};
+Object.assign(existing.mcpServers, kit.mcpServers);
+fs.writeFileSync(dest, JSON.stringify(existing, null, 2) + '\n');
+JSEOF
+    echo "    merged pi-harness into ${mcp_file}"
+  else
+    echo "    Warning: node not found — add pi-harness manually to ${mcp_file}"
+    echo "    See: ${kit_mcp}"
+  fi
+}
+
 copy_if_missing "${KIT_SOURCE}/templates/WORKSPACE-README.md" "${FACTORY_WS}/README.md"
 copy_if_missing "${KIT_SOURCE}/templates/CONTEXT.md"          "${FACTORY_WS}/context/CONTEXT.md"
 copy_if_missing "${KIT_SOURCE}/templates/PRD.md"              "${FACTORY_WS}/context/PRD.md"
@@ -127,6 +164,10 @@ copy_if_missing "${KIT_SOURCE}/templates/milestones.md"       "${FACTORY_WS}/pla
 copy_if_missing "${KIT_SOURCE}/templates/sprints.md"          "${FACTORY_WS}/planning/sprints.md"
 copy_if_missing "${KIT_SOURCE}/templates/tasks.md"            "${FACTORY_WS}/planning/tasks.md"
 copy_if_missing "${KIT_SOURCE}/templates/factory.config.yaml" "${FACTORY_WS}/factory.config.yaml"
+inject_mcp_server
+copy_if_missing "${KIT_SOURCE}/templates/pi/agents.policy.yaml" "${FACTORY_WS}/pi/agents.policy.yaml"
+copy_if_missing "${KIT_SOURCE}/templates/pi/models.profile.yaml" "${FACTORY_WS}/pi/models.profile.yaml"
+copy_if_missing "${KIT_SOURCE}/templates/pi/README.md" "${FACTORY_WS}/pi/README.md"
 copy_if_missing "${KIT_SOURCE}/templates/specs/README.md"     "${FACTORY_WS}/specs/README.md"
 copy_if_missing "${KIT_SOURCE}/templates/specs/example.feature" "${FACTORY_WS}/specs/example.feature"
 
@@ -195,6 +236,11 @@ cat > .kit-meta.json <<EOF
 EOF
 echo "    wrote .kit-meta.json (kit @ ${KIT_SHA:0:8})"
 
+# Sync Pi templates → .factory/pi/ (and .pi/ if harness exists)
+if [[ -f "${KIT_SOURCE}/scripts/sync-pi-config.sh" ]]; then
+  bash "${KIT_SOURCE}/scripts/sync-pi-config.sh" 2>&1 | sed 's/^/    /' || true
+fi
+
 # ── 5. .gitignore — track .cursor/ files, ignore generated artifacts ──────────
 echo "==> Updating .gitignore"
 touch .gitignore
@@ -240,7 +286,8 @@ echo "Project layout:"
 echo "  ${FACTORY_WS}/context/    PRD, TECHSPEC, CONTEXT, ADR, features/"
 echo "  ${FACTORY_WS}/planning/   milestones, sprints, tasks"
 echo "  ${FACTORY_WS}/rules/      project rules (project-*.mdc → .cursor/rules/)"
-echo "  ${FACTORY_WS}/handoff/    Pi TaskBrief files (Engine: pi tasks)"
+echo "  ${FACTORY_WS}/handoff/    Pi task artifacts (auto-managed by MCP bridge)"
+echo "  ${FACTORY_WS}/pi/         Pi model routing (agents.policy.yaml)"
 echo "  ${FACTORY_WS}/policies/   security-reviewer.md, quality.gates.yaml"
 echo "  ${FACTORY_KIT}/           kit submodule (read-only)"
 echo "  .cursor/                  kit files, tracked in git"
@@ -248,5 +295,7 @@ echo ""
 echo "Next steps:"
 echo "  1. /bootstrap-branches"
 echo "  2. /align → /to-prd → /to-backlog"
-echo "  3. (Optional) ${FACTORY_KIT}/scripts/bootstrap-pi.sh   # Graphify + Sentrux (+ Pi if installed from pi.dev)"
+echo "  3. (Optional) ${FACTORY_KIT}/scripts/bootstrap-pi.sh   # Pi harness + model routing"
+echo "  4. (Optional) /linear-setup                             # Linear labels + cycles + IDs"
+echo "  5. Reload Cursor MCP (Settings → MCP) to activate pi-harness bridge"
 echo ""

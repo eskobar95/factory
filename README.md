@@ -1,146 +1,253 @@
-# Factory — Personal AI Dev OS
+# Factory 2.0 — Personal AI Dev OS
 
-Public GitHub repo (`eskobar95/factory`) — Cursor commands, skills, rules, and hooks for solo multi-project development.
+**Kit:** installeres i hvert projekt via git submodule. Giver Cursor + Pi et fælles workflow — planlægning, sprint-execution, quality gates, og Pi harness.
 
-## What is Factory?
+---
 
-Factory is a **kit** you install into each project via git submodule. It gives you:
+## Hvad Factory giver dig
 
-- **Planning commands** — align, PRD, backlog before code
-- **Harness commands** — parallel subagent sprint execution with CI gates
-- **Skills** — structured agent behavior for each step
-- **Rules & hooks** — always-on guardrails (typecheck, secrets, branch protection)
+| Komponent | Hvad |
+|-----------|------|
+| **Planlægning** | `/align → /to-prd → /to-backlog` — PRD, TECHSPEC, tasks.md |
+| **Sprint-execution** | `/run-sprint` — parallelle subagents, revision loop, CI gate |
+| **Pi harness** | ultimate-pi (plan → execute → review) via MCP bridge i Cursor |
+| **Quality gates** | deslop → thermo → check-compiler → sentrux → `/ship` |
+| **Linear sync** | tasks.md er SSOT — `/linear-sync` synker til Linear |
+| **Regler & hooks** | TypeScript, secrets, branch protection — altid aktive |
 
-Project-specific data (PRD, tasks, diary) lives in **`.factory/`** in each project. The kit itself lives in **`.factory/kit/`**.
+---
 
-## Two tracks
+## To execution engines
 
-### Planning track (before code)
+Hvert task i `tasks.md` har et `**Engine:**`-felt:
 
-| Command | Skill | Output |
-|---------|-------|--------|
-| `/align` | `planning/align` | `CONTEXT.md`, ADRs |
-| `/to-prd` | `planning/to-prd` | `PRD.md`, `TECHSPEC.md` |
-| `/to-backlog` | `planning/to-backlog` | milestones, sprints, `tasks.md` |
-| `/to-plan` | all three (fast path) | same as full pipeline |
-| `/handoff` | `productivity/handoff` | temp session summary |
-
-Inspired by [Matt Pocock's skills](https://www.aihero.dev/skills.md) and [decision-capture patterns](docs/INSPIRATION.md). Factory uses `.factory/` workspace + `tasks.md` instead of GitHub issues.
-
-**Deprecated:** `/po-breakdown` → `/to-plan`
-
-### Harness track (execution)
-
-| Command | Skill | Output |
-|---------|-------|--------|
-| `/bootstrap-branches` | — | `dev` + `staging` branches |
-| `/run-sprint S001` | `harness/harness` + pipeline | PRs to `dev` |
-| `/run-task T00x` | same pipeline | single task |
-| `/hitl-checkpoint T00x` | `harness/hitl-checkpoint` | human approval gate |
-| `/milestone-review M001` | `harness/milestone-ci` | `dev → staging` PR |
-
-Review runs **two phases**: task fit + **thermo-nuclear** maintainability.
-
-Task pipeline: `implement → verify → review → close → fix-ci` (PR must be green before `done`).
-
-Tasks use **vertical slices**, **parallel groups** (A, B, C…), and **Mode: AFK | HITL**.
-
-## Repo layout (this kit)
-
-```
-factory/                    ← you are here (eskobar95/factory)
-  commands/
-    planning/               align, to-prd, to-backlog, to-plan
-    harness/                run-sprint, run-task, milestone-review, …
-    productivity/           handoff, factory-update
-  skills/
-    harness/                implement, verify, review, close, …
-    planning/               align, to-prd, to-backlog
-    productivity/           handoff
-    catalog/                third-party skill pointers
-  rules/                    base, nextjs, drizzle, git, testing, security, architecture
-  hooks/                    typecheck, audit, guards
-  templates/                scaffold files for project workspace
-  docs/                     INSTALL, ARCHITECTURE, MIGRATION
-  install.sh
-  update.sh
+```markdown
+**Engine:** cursor   ← standard Cursor subagent (default)
+**Engine:** pi       ← Pi/ultimate-pi harness (tungere, governed)
 ```
 
-See also: [commands/README.md](commands/README.md) · [skills/README.md](skills/README.md) · [rules/README.md](rules/README.md) · [hooks/README.md](hooks/README.md) · [templates/README.md](templates/README.md)
+Pi-tasks kræver `.pi/` harness bootstrapped. Se [Pi-sektion](#pi-harness) nedenfor.
+
+---
+
+## Planlægnings-track
+
+```
+/align       → CONTEXT.md, ADRs
+/to-prd      → PRD.md, TECHSPEC.md
+/to-backlog  → milestones.md, sprints.md, tasks.md
+/to-plan     → alle tre i én kommando
+```
+
+---
+
+## Sprint-track (Cursor engine)
+
+```
+/bootstrap-branches   → dev + staging branches
+/run-sprint S001      → parallelle tasks → PRs til dev
+/run-task T003        → enkelt task
+/ship T003            → quality gate + åbn PR
+/milestone-review M01 → dev → staging PR
+```
+
+Task-pipeline: `implement → verify → review → close → fix-ci`
+
+---
+
+## Pi harness
+
+ultimate-pi kører plan → execute → review med isolerede subagents og review gates.
+
+### Forudsætninger
+
+```bash
+# Pi installeres manuelt fra https://pi.dev
+pi install npm:ultimate-pi
+pi install npm:@offbynan/pi-cursor-provider
+pi → /login cursor          # Cursor OAuth
+# OpenRouter key i .env: OPENROUTER_API_KEY=...
+
+# Bootstrap per projekt
+.factory/kit/scripts/bootstrap-pi.sh
+pi → /harness-setup         # bootstrap .pi/ harness
+```
+
+### Model routing
+
+```
+.factory/kit/templates/pi/   ← kit defaults (read-only)
+        ↓ install/update
+.factory/pi/agents.policy.yaml  ← projekt SSOT (rediger her)
+        ↓ sync-pi-config.sh
+.pi/agents.policy.yaml          ← ultimate-pi runtime
+```
+
+**Standard model-setup:**
+
+| Phase | Agent | Model |
+|-------|-------|-------|
+| Planning | decompose, synthesizer, author… | `openrouter/hy3-preview` |
+| Planning research | implementation-researcher | `openrouter/glm-5.2` |
+| Execution | executor (default) | `cursor/composer-2.5` |
+| Execution | executor (heavy) | `cursor/glm-5.2` |
+| Review | adversary | `cursor/grok-4.3` |
+| Review | evaluator | `cursor/glm-5.2` |
+| Review | tie-breaker | `cursor/gpt-5.5` |
+
+Skift til heavy executor: sæt `harness/running/executor.model: cursor/glm-5.2` i `.factory/pi/agents.policy.yaml` → `sync-pi-config.sh`.
+
+### MCP bridge (Cursor ↔ Pi)
+
+`install.sh` kopierer `.cursor/mcp.json` med `pi-harness` MCP-server. Cursor-agenter kan kalde Pi direkte:
+
+```
+harness_auto("implement login flow")   # starter Pi i baggrunden
+harness_status()                       # poll: phase, alive, recent output
+harness_artifacts("executor-summary")  # læs Pi's arbejde
+harness_artifacts("adversary-report")  # adversary findings
+harness_abort()                        # stop Pi
+```
+
+MCP-server kræver `node` og Pi i PATH. Aktivér: Cursor → Settings → MCP → reload.
+
+---
 
 ## Install / update
 
 ```bash
-# From your project root (first time)
+# Første gang — fra dit projekt-root
 git submodule add https://github.com/eskobar95/factory.git .factory/kit
 ./.factory/kit/install.sh
 
-# Update kit in an existing project
+# Opdater eksisterende projekt
 ./.factory/kit/update.sh
-git add .factory/kit && git commit -m "chore: update factory kit"
+# Eller i Cursor: /factory-update
+
+# Pin opdateringen
+git add .factory/kit .cursor/ .kit-meta.json
+git commit -m "chore: update factory kit"
 ```
 
-Or use `/factory-update` in Cursor.
+---
 
-Full guide: [docs/INSTALL.md](docs/INSTALL.md)
-
-## Project layout (after install)
+## Projekt-layout (efter install)
 
 ```
-your-project/
+dit-projekt/
   .factory/
-    kit/           ← submodule (eskobar95/factory — do not edit)
-    context/       PRD, TECHSPEC, CONTEXT, ADR/, STACK
-    planning/      milestones.md, sprints.md, tasks.md
-    specs/         BDD .feature files (optional)
-    logs/          diary.md, decisions.md
-    skills/        project-specific skill overrides
-    README.md      workspace guide (from template)
-  .cursor/         symlinks → .factory/kit (rules, skills, commands, hooks)
-  src/             your app
+    kit/                 ← submodule (read-only kit)
+    context/             PRD.md, TECHSPEC.md, CONTEXT.md, ADR/, STACK.md
+    planning/            milestones.md, sprints.md, tasks.md
+    pi/                  agents.policy.yaml, models.profile.yaml
+    policies/            security-reviewer.md, quality.gates.yaml
+    handoff/             Pi task artifacts (auto-managed af MCP bridge)
+    logs/                diary.md, decisions.md
+    rules/               projekt-specifikke regler (project-*.mdc)
+  .cursor/
+    mcp.json             pi-harness MCP bridge
+    rules/               kit + projekt regler
+    commands/            slash commands
+    skills/factory/      kit skills
+    hooks/               typecheck, audit, guard scripts
+  .pi/
+    agents.policy.yaml   ← synket fra .factory/pi/ (ultimate-pi runtime)
+    harness/             run artifacts, active-run.json
+  .kit-meta.json         kit version + migration pointer
 ```
 
-## End-to-end workflow
+---
 
-```mermaid
-flowchart LR
-  idea[Macro idea]
-  align[/align/]
-  prd[/to-prd/]
-  backlog[/to-backlog/]
-  sprint[/run-sprint/]
-  milestone[/milestone-review/]
-  idea --> align --> prd --> backlog --> sprint --> milestone
+## Konfiguration
+
+`.factory/factory.config.yaml` — commit denne fil:
+
+```yaml
+git:
+  integration_branch: dev
+
+execution:
+  default_engine: cursor     # cursor | pi
+
+pi:
+  enabled: false             # true efter bootstrap-pi.sh
+  session:
+    run_model: composer-2.5  # heavy: glm-5.2
+
+graphify:
+  enabled: false
+
+sentrux:
+  enabled: false
+
+linear:
+  enabled: false
+  team_id: ""
+
+policies:
+  security_reviewer: .factory/policies/security-reviewer.md
+  quality_gates:     .factory/policies/quality.gates.yaml
+  approval_policy:   .factory/policies/approval.policy.yaml
 ```
 
-Or: `idea → /to-plan → /run-sprint → /milestone-review`
-
-You only approve **`staging → main`** and milestone PRs to staging.
-
-## Skill index
-
-See [`skills/INDEX.md`](skills/INDEX.md) for a full quick-reference of every skill, hook, and rule.
-
-## Additional skills
-
-- **Project:** `.factory/skills/` → `.cursor/skills/project/`
-- **Vendor:** `npx skills add mattpocock/skills` — see [skills/catalog/README.md](skills/catalog/README.md)
+---
 
 ## Branch model
 
 ```
-main ← you merge staging here
-  └── staging ← milestone PR
-        └── dev ← task PRs
-              └── feature/[sprint]/[task-id]-[slug]
+main ← du merger staging her
+  └── staging ← milestone PR (/milestone-review)
+        └── dev ← task PRs (/run-sprint)
+              └── feature/S001/T003-slug
 ```
 
-## Requirements
+---
 
-- Cursor 3.3+ (subagents, Build in Parallel)
-- Cursor 3.5+ (milestone Background Agents)
-- pnpm projects (`typecheck`, `lint`, `test`)
+## Repo layout (dette kit)
 
-## License
+```
+factory/
+  commands/
+    planning/           align, to-prd, to-backlog, to-plan
+    harness/            run-sprint, run-task, milestone-review
+    productivity/       factory-update, capture-rule, linear-sync
+  skills/
+    harness/            implement, verify, review, close, fix-ci, ship
+    planning/           align, to-prd, to-backlog
+    productivity/       migrate-to-2.0, capture-rule, linear-sync
+  templates/
+    pi/                 agents.policy.yaml, models.profile.yaml
+    policies/           security-reviewer.md, quality.gates.yaml
+    mcp.json            Cursor MCP config template
+  scripts/
+    bootstrap-pi.sh     Graphify + Sentrux + Pi + MCP setup
+    sync-pi-config.sh   Sync .factory/pi/ → .pi/
+    install-pi-user-deps.sh   Fix ultimate-pi peer deps
+    pi-mcp-server.js    Pi harness MCP server
+  migrations/           Versionsmigrationer (001-pi-config.sh, …)
+  rules/                base, nextjs, drizzle, git, security
+  hooks/                typecheck, audit, guard scripts
+  install.sh
+  update.sh
+```
 
-Public — solo use.
+---
+
+## Skill-index
+
+[`skills/INDEX.md`](skills/INDEX.md) — fuldt overblik over alle skills, hooks og regler.
+
+---
+
+## Krav
+
+- Cursor (nyeste version anbefales)
+- Node.js 18+ (til Pi MCP-server og harness)
+- Pi installeret fra [pi.dev](https://pi.dev) (kun nødvendigt for Pi engine)
+- pnpm (til `typecheck`, `lint`, `test` hooks)
+
+---
+
+## Licens
+
+Public — solo brug.

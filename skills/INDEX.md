@@ -35,7 +35,7 @@ Quick reference for all skills. Skills live at `.cursor/skills/factory/`.
 | `harness/milestone-ci` | Background Agent | Security audit + React Doctor + bundle + test suite for `/milestone-review`. |
 
 **Pipeline per cursor task:** `implement → verify → review → close → fix-ci` (max 2 revision cycles)
-**Pipeline per pi task:** write TaskBrief → user runs Pi session → `/ship` in Cursor
+**Pipeline per pi task:** `harness_auto` (MCP) → Pi runs plan → execute → review in background → `/ship` in Cursor
 
 ---
 
@@ -60,7 +60,8 @@ Quick reference for all skills. Skills live at `.cursor/skills/factory/`.
 | `productivity/handoff` | `/handoff [focus]` | Compact session summary for next chat. |
 | `productivity/capture-rule` | `/capture-rule` | Persist learned project pattern as `.factory/rules/project-*.mdc`. |
 | `productivity/migrate-to-2.0` | `/migrate-to-2.0` | Audit + migrate Factory 1.0 project to 2.0 (non-destructive). |
-| `productivity/linear-sync` | `/linear-sync` | Sync tasks.md → Linear (create issues, close done). tasks.md is SSOT. |
+| `productivity/linear-setup` | `/linear-setup` | One-time guided setup: fetch IDs, create labels (engine/mode/blocked) + cycles per sprint, write config. |
+| `productivity/linear-sync` | `/linear-sync` | Sync tasks.md → Linear (create/update issues, labels, cycles, blocking relations, close done). tasks.md is SSOT. Auto-runs from `log-task` on status change. |
 
 ---
 
@@ -108,6 +109,22 @@ Quick reference for all skills. Skills live at `.cursor/skills/factory/`.
 
 Bootstrap Graphify + Sentrux + Pi: `scripts/bootstrap-pi.sh`
 
+Pi model routing lives in `.factory/pi/agents.policy.yaml` (project SSOT). Sync to `.pi/` via `scripts/sync-pi-config.sh` (runs automatically on `/factory-update`).
+
+**Cursor ↔ Pi MCP bridge** — Pi harness is callable directly from Cursor via MCP tools:
+
+| MCP tool | Hvad den gør |
+|----------|-------------|
+| `harness_auto` | Fuld pipeline (plan → run → review) i baggrunden |
+| `harness_plan` | Kun planlægning |
+| `harness_run` | Kun implementering (kræver godkendt plan) |
+| `harness_review` | Kun review (evaluator + adversary) |
+| `harness_status` | Poll fase, liveness, seneste output |
+| `harness_artifacts` | Læs executor-summary, adversary-report, eval-verdict |
+| `harness_abort` | Afbryd kørende Pi-process |
+
+MCP-server starter automatisk via `.cursor/mcp.json` (kopieret af `install.sh`).
+
 ---
 
 ## Quick lookup
@@ -127,3 +144,6 @@ Bootstrap Graphify + Sentrux + Pi: `scripts/bootstrap-pi.sh`
 | Sync tasks → Linear | `/linear-sync` |
 | Update factory kit | `/factory-update` |
 | Bootstrap Pi + Graphify | `scripts/bootstrap-pi.sh` |
+| Run task via Pi (fra Cursor) | `/pi-run T003` — MCP bridge, monitorerer i samme chat |
+| Tjek Pi status | `/pi-status` |
+| Edit Pi model routing | `.factory/pi/agents.policy.yaml` → `scripts/sync-pi-config.sh` |

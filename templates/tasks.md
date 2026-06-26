@@ -58,5 +58,6 @@
 ---
 
 <!-- Add more tasks below. Task IDs: T001, T002, ... -->
-<!-- Engine: cursor  → dispatched as Cursor Task subagent                      -->
-<!-- Engine: pi      → TaskBrief written to .factory/handoff/T00x.yaml → Pi   -->
+<!-- Engine: cursor  → dispatched as Cursor Task subagent (parallel)           -->
+<!-- Engine: pi      → dispatched via MCP bridge (harness_auto) → Pi runs      -->
+<!--                   plan → execute → review in background → /ship in Cursor -->

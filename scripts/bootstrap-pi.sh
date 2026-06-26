@@ -110,6 +110,11 @@ echo "    Pi is a separate agent environment (like Cursor) that must be installe
 echo "    manually from https://pi.dev before ultimate-pi can be used."
 echo ""
 
+KIT_SOURCE="${PROJECT_ROOT}/.factory/kit"
+if [[ ! -d "${KIT_SOURCE}" ]]; then
+  KIT_SOURCE="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+fi
+
 if command -v pi &>/dev/null; then
   ok "pi CLI found ($(pi --version 2>/dev/null || echo 'version unknown'))"
   PI_INSTALLED=true
@@ -179,6 +184,15 @@ fi
 
 echo ""
 
+# ── 3b. Factory Pi model routing ──────────────────────────────────────────────
+log "Factory Pi model routing"
+if [[ "${PI_INSTALLED}" == "true" ]]; then
+  bash "${KIT_SOURCE}/scripts/install-pi-user-deps.sh" 2>&1 | sed 's/^/    /' || true
+fi
+bash "${KIT_SOURCE}/scripts/sync-pi-config.sh" 2>&1 | sed 's/^/    /' || true
+
+echo ""
+
 # ── 4. .gitignore additions ───────────────────────────────────────────────────
 append_gitignore() {
   local entry="$1"
@@ -209,13 +223,13 @@ if [[ "${PI_INSTALLED}" == "true" ]]; then
   echo "      pi → /login → select 'OpenRouter'"
   echo "      (supports Claude, GPT-5, Gemini, Grok, Kimi K2, etc.)"
   echo ""
-  echo "    Option C — Both (Claude primary, OpenRouter for experiments):"
-  echo "      Login to Claude first, set OPENROUTER_API_KEY in .env"
-  echo "      Switch per session: pi --provider openrouter --model anthropic/claude-opus-4"
-  echo ""
-  echo "    NOTE: Cursor's subscription cannot be used as a model API for Pi."
-  echo "    Cursor SDK is for running Cursor agents — not an LLM proxy."
-  echo ""
+    echo "    Option C — Cursor via pi-cursor-provider (uses Cursor subscription in Pi):"
+    echo "      pi install npm:@offbynan/pi-cursor-provider"
+    echo "      pi → /login cursor"
+    echo ""
+    echo "    Per-agent routing: edit .factory/pi/agents.policy.yaml"
+    echo "    Sync to .pi/: .factory/kit/scripts/sync-pi-config.sh"
+    echo ""
 fi
 
 # ── 5. Summary ────────────────────────────────────────────────────────────────
@@ -243,8 +257,18 @@ fi
 
 echo ""
 echo "Next:"
-echo "  1. Edit .factory/factory.config.yaml — review pi/graphify/sentrux settings"
-echo "  2. Edit .sentrux/rules.toml — define your layer architecture"
-echo "  3. Commit: git add .factory/ .pi/ .sentrux/ .gitignore"
-echo "             git commit -m 'feat: bootstrap Pi + Graphify + Sentrux'"
+echo "  1. Edit .factory/pi/agents.policy.yaml — model routing per harness phase"
+echo "  2. Edit .factory/factory.config.yaml — review pi/graphify/sentrux settings"
+echo "  3. pi → /harness-setup (if .pi/ not yet created)"
+echo "  4. Reload Cursor MCP (Cursor → Settings → MCP) — pi-harness server is now available"
+echo "  5. Commit: git add .factory/pi/ .pi/agents.policy.yaml .env .gitignore .cursor/mcp.json"
+echo ""
+echo "Cursor MCP tools (after reload):"
+echo "  harness_auto     — full pipeline (plan → run → review) from Cursor"
+echo "  harness_plan     — planning phase"
+echo "  harness_run      — execution phase"
+echo "  harness_review   — review phase (adversary + evaluator)"
+echo "  harness_status   — poll progress + recent Pi output"
+echo "  harness_artifacts — read executor-summary, adversary-report, etc."
+echo "  harness_abort    — abort running Pi process"
 echo ""

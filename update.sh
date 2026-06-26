@@ -60,6 +60,39 @@ for script in .cursor/hooks/*.sh; do
   [[ -f "${script}" ]] && chmod +x "${script}"
 done
 
+# Sync Pi model routing if kit templates exist
+if [[ -f "${FACTORY_KIT}/scripts/sync-pi-config.sh" ]]; then
+  echo "==> Syncing Pi model routing..."
+  bash "${FACTORY_KIT}/scripts/sync-pi-config.sh" 2>&1 | sed 's/^/    /' || true
+fi
+
+# Ensure pi-harness MCP server is present in .cursor/mcp.json
+MCP_FILE=".cursor/mcp.json"
+KIT_MCP="${FACTORY_KIT}/templates/mcp.json"
+if [[ -f "${KIT_MCP}" ]]; then
+  if [[ ! -f "${MCP_FILE}" ]]; then
+    cp "${KIT_MCP}" "${MCP_FILE}"
+    echo "    created ${MCP_FILE}"
+  elif ! grep -q '"pi-harness"' "${MCP_FILE}" 2>/dev/null; then
+    if command -v node >/dev/null 2>&1; then
+      node - "${MCP_FILE}" "${KIT_MCP}" <<'JSEOF'
+const [, , dest, src] = process.argv;
+const fs = require('fs');
+const existing = JSON.parse(fs.readFileSync(dest, 'utf8'));
+const kit = JSON.parse(fs.readFileSync(src, 'utf8'));
+existing.mcpServers = existing.mcpServers || {};
+Object.assign(existing.mcpServers, kit.mcpServers);
+fs.writeFileSync(dest, JSON.stringify(existing, null, 2) + '\n');
+JSEOF
+      echo "    merged pi-harness into ${MCP_FILE}"
+    else
+      echo "    Warning: node not found — add pi-harness to ${MCP_FILE} manually"
+    fi
+  else
+    echo "    ${MCP_FILE} already has pi-harness — skipped"
+  fi
+fi
+
 # ── 3. Re-sync project rules ──────────────────────────────────────────────────
 if [[ -n "$(ls -A "${FACTORY_WS}/rules/" 2>/dev/null)" ]]; then
   cp "${FACTORY_WS}/rules/"*.mdc .cursor/rules/ 2>/dev/null || true

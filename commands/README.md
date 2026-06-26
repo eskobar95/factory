@@ -27,29 +27,37 @@ Each command is a markdown file. Cursor loads it when you type `/command-name`.
 | `/review-pr [url]` | Fetch PR comments, fix, re-push |
 | `/milestone-review M001` | CI gates + integration → staging PR |
 
-**Engine routing:** tasks with `Engine: cursor` → Cursor Task subagent. `Engine: pi` → TaskBrief written to `.factory/handoff/T[id].yaml`.
+**Engine routing:** tasks with `Engine: cursor` → Cursor Task subagent. `Engine: pi` → `/pi-run` via MCP bridge.
+
+| Command | Description |
+|---------|-------------|
+| `/pi-run T001` | Start Pi harness via MCP — monitors in this chat session, runs `/ship` when done |
+| `/pi-status` | Check current Pi phase, output, and available artifacts |
 
 ## Productivity
 
 | Command | Description |
 |---------|-------------|
 | `/handoff` | Compact session summary |
-| `/factory-update` | Pull latest kit + re-copy `.cursor/` files |
+| `/factory-update` | Pull latest kit + re-copy `.cursor/` files + sync Pi config |
 | `/capture-rule` | Persist project pattern as `.factory/rules/project-*.mdc` |
 | `/migrate-to-2.0` | Audit + migrate Factory 1.0 project (non-destructive) |
-| `/linear-sync` | Sync tasks.md → Linear (create + close). `tasks.md` is SSOT. |
+| `/linear-setup` | One-time guided setup: fetch IDs, create labels + cycles, write config |
+| `/linear-sync` | Sync tasks.md → Linear (create/update/close with labels, cycles, relations). `tasks.md` is SSOT. |
 
-## Typical flow
+## Typical flow — Cursor engine
 
 ```
 /align → /to-prd → /to-backlog → /bootstrap-branches → /run-sprint S001 → /ship T001 → /milestone-review M001
 ```
 
-## Pi flow (when Engine: pi)
+## Typical flow — Pi engine
 
 ```
-/run-sprint S001
-  → writes .factory/handoff/T001.yaml
-  → user runs Pi session in .worktrees/pi-T001
-  → /ship T001   (quality gate in Cursor)
+/to-backlog          (sæt Engine: pi på tunge tasks)
+/pi-run T003         (Pi starter via MCP — denne session monitorerer)
+  [Pi kører: plan → execute → review]
+  → adversary-report vises
+  → /ship T003       (automatisk hvis review passed)
+/milestone-review M001
 ```

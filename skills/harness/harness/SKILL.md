@@ -59,50 +59,48 @@ Read `**Engine:**` from each task before dispatch. Mixed groups are allowed.
 
 | Engine | Action |
 |--------|--------|
-| `cursor` | Dispatch as Cursor Task subagent (standard flow) |
-| `pi` | Write TaskBrief YAML + print Pi instructions for user |
+| `cursor` | Dispatch as Cursor Task subagent (parallel, standard flow) |
+| `pi` | Dispatch via MCP bridge using `/pi-run` (sequential per group) |
 
-### Pi tasks — write TaskBrief before dispatch
+### Pi tasks — dispatch via MCP bridge
 
-For each task with `Engine: pi`, write `.factory/handoff/T[id].yaml`:
+Pi runs sequentially — only one Pi session at a time. Within a parallel group, dispatch all `cursor` tasks first (parallel), then run `pi` tasks one by one.
 
-```yaml
-task_id: T001
-sprint: S001
-milestone: M001
-branch: feature/S001/T001-task-slug
-title: "[Task title]"
-objective: "[Slice objective]"
-layers:
-  - "service: [description]"
-acceptance_criteria:
-  - "[criterion 1]"
-context_files:
-  - "[relevant file path]"
-adr_refs:
-  - "ADR-001"
-definition_of_done:
-  - "pnpm typecheck passes"
-  - "pnpm lint passes"
-  - "tests written and passing"
-generated_at: "[ISO timestamp]"
-```
+**Dispatch order within a group:**
+1. Launch all `cursor` tasks in parallel (Task tool, `run_in_background: true`)
+2. While cursor tasks run: dispatch the first `pi` task via `/pi-run`
+3. Wait for each Pi task to complete before starting the next Pi task in the group
+4. Wait for all cursor tasks before moving to the next group
 
-After writing, print to user:
+**For each `Engine: pi` task:**
+
+Tell the user you are dispatching via MCP and call `/pi-run T[id]` inline:
 
 ```markdown
-## Pi task ready — T[id]
-TaskBrief → `.factory/handoff/T[id].yaml`
-
-Run Pi session:
-  git worktree add .worktrees/pi-T[id] [branch]
-  cd .worktrees/pi-T[id]
-  pi "/harness-plan 'T[id]: [title]'"
-
-After Pi completes → run `/ship T[id]` in Cursor.
+## Dispatching Pi task — T[id]
+Calling /pi-run T[id] via MCP bridge. Pi will run plan → execute → review.
+Monitoring in this session — cursor tasks in this group run in parallel.
 ```
 
-Pi tasks are **non-blocking** for the lead: continue dispatching cursor tasks in the same group in parallel.
+Then follow `/pi-run` command procedure:
+- Call MCP `harness_auto` with the task objective from tasks.md
+- Start Shell watcher on `.pi/harness/.mcp-state.json`
+- When Pi completes: read `harness_artifacts("adversary-report")` + `harness_artifacts("executor-summary")`
+- If `block_merge: true` → surface findings, mark task `blocked`, ask user
+- If review passed → run `/ship T[id]` gate, then mark task `done`
+
+**Pi task status in group summary:**
+
+```markdown
+## Group A complete
+| Task | Engine | Status | PR |
+|------|--------|--------|----|
+| T001 | cursor | done   | #42 |
+| T002 | cursor | done   | #43 |
+| T003 | pi     | done   | #44 |
+```
+
+Pi tasks are **non-blocking to cursor tasks in the same group**, but Pi tasks within a group are **sequential to each other**.
 
 ## Mandatory subagent dispatch — cursor tasks (non-negotiable)
 
@@ -170,7 +168,8 @@ Process results **in task ID order**:
 When invoked via `/run-task Txxx`:
 
 - Run preflight for one task only
-- Dispatch one Task subagent (cursor) or write one TaskBrief (pi)
+- `Engine: cursor` → dispatch one Task subagent
+- `Engine: pi` → call `/pi-run T[id]` via MCP (inline in this session)
 - Same post-processing and log-task rules
 
 ## Per-task pipeline (inside cursor subagent)
@@ -195,11 +194,11 @@ When all tasks in group A are terminal (`done` or `blocked`):
 ## Group A complete
 | Task | Engine | Status | PR |
 |------|--------|--------|----|
-| T001 | cursor | done   | … |
-| T002 | pi     | brief written | pending user Pi run |
+| T001 | cursor | done   | #42 |
+| T002 | pi     | done   | #43 |
 ```
 
-Proceed to group B only when A has no pending cursor `in-progress` / `todo` AFK work left.
+Proceed to group B only when A has no pending work — cursor tasks done/blocked AND all Pi tasks in the group done/blocked.
 
 ## Sprint completion
 
@@ -214,7 +213,9 @@ When no runnable AFK work remains:
 - Never push to `staging` or `main`
 - Task PRs target `${INTEGRATION_BRANCH}` only (from factory.config.yaml)
 - Never skip `log-task` on terminal task states during `/run-sprint`
-- Pi tasks are non-blocking to lead — they require async user action
+- Pi tasks run via MCP (`/pi-run`) — do NOT write manual TaskBriefs and ask user to open a terminal
+- Pi tasks within a group are sequential; cursor tasks in the same group run in parallel
+- Never mark a Pi task `done` before `/ship T[id]` quality gate passes
 
 ## Skills referenced
 

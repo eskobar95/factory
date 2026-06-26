@@ -1,0 +1,53 @@
+# Factory 2.0 — Pi model profile (human-readable reference)
+# Active routing lives in agents.policy.yaml (synced to .pi/).
+# Switch executor tier by editing agents.policy.yaml → sync-pi-config.sh
+
+active_profile: default
+
+# ── Executor tiers (pick one in agents.policy.yaml) ───────────────────────────
+# ultimate-pi has a single harness/running/executor — swap model per task type.
+executor_tiers:
+  default:
+    model: cursor/composer-2.5
+    thinking: high
+    use_for: "Standard implementation — Cursor agentic coding, efficient on subscription"
+  heavy:
+    model: cursor/glm-5.2
+    thinking: high
+    use_for: "Complex refactors, deep reasoning, large multi-file changes"
+
+# Parent session defaults (orchestrator — /harness-plan, /harness-run, /harness-review)
+parent:
+  plan:
+    provider: openrouter
+    model: tencent/hy3-preview
+    thinking: medium
+  run:
+    provider: cursor
+    model: composer-2.5
+    thinking: high
+  review:
+    provider: cursor
+    model: grok-4.3
+    thinking: high
+
+# OpenRouter — planning phase only (does not consume Cursor quota)
+openrouter:
+  scout: openrouter/openrouter/owl-alpha
+  plan: openrouter/tencent/hy3-preview
+  research: openrouter/z-ai/glm-5.2
+  adversary: openrouter/z-ai/glm-5.2
+
+# Cursor — execution + review (pi-cursor-provider + /login cursor)
+cursor:
+  executor_default: cursor/composer-2.5
+  executor_heavy: cursor/glm-5.2
+  review_adversary: cursor/grok-4.3
+  review_evaluator: cursor/glm-5.2
+  review_tie_breaker: cursor/gpt-5.5
+
+# Web retrieval subagents — set in .env (see .env.factory.example)
+env:
+  HARNESS_WEB_FAST_MODEL: openrouter/openrouter/owl-alpha
+  HARNESS_WEB_EXPANDER_MODEL: openrouter/tencent/hy3-preview
+  HARNESS_WEB_QUALITY_MODEL: openrouter/z-ai/glm-5.2
