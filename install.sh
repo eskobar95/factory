@@ -64,6 +64,11 @@ remove_legacy_symlinks() {
     echo "    removing legacy symlink .cursor/hooks.json"
     rm -f ".cursor/hooks.json"
   fi
+  # Factory 1.0 sometimes had .cursor/skills/factory as a symlink (not .cursor/skills)
+  if [[ -L ".cursor/skills/factory" ]]; then
+    echo "    removing legacy symlink .cursor/skills/factory"
+    rm -f ".cursor/skills/factory"
+  fi
 }
 
 migrate_ai_workspace
