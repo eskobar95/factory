@@ -1,0 +1,39 @@
+{
+  "name": "factory-kit",
+  "version": "2.0.0",
+  "description": "Factory 2.0 — Cursor cockpit + Pi harness kit for AI-assisted software development",
+  "keywords": [
+    "cursor",
+    "ai",
+    "agent",
+    "developer-tools",
+    "pi",
+    "ultimate-pi",
+    "linear"
+  ],
+  "homepage": "https://github.com/eskobar95/factory",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/eskobar95/factory.git"
+  },
+  "license": "MIT",
+  "bin": {
+    "factory-kit": "./bin/factory-kit.js"
+  },
+  "files": [
+    "bin/",
+    "commands/",
+    "hooks/",
+    "rules/",
+    "scripts/",
+    "skills/",
+    "templates/",
+    "migrations/",
+    "install.sh",
+    "update.sh",
+    "VERSION"
+  ],
+  "engines": {
+    "node": ">=18"
+  }
+}
