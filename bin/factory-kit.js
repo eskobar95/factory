@@ -123,13 +123,13 @@ Commands:
 Examples:
   # New project
   cd my-project
-  npx factory-kit install
+  npx @eskoubar95/factory-kit install
 
   # Update existing project
-  npx factory-kit update
+  npx @eskoubar95/factory-kit update
 
   # Enable Pi after install
-  npx factory-kit bootstrap-pi
+  npx @eskoubar95/factory-kit bootstrap-pi
 
 Docs: https://github.com/eskobar95/factory
 `);
